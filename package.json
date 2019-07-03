@@ -1,0 +1,13 @@
+{
+  "name": "web-demon1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "build": "electron-packager . kuaixun-win-x64 --win --out win-kuaixun --arch=x64 --app--version=1.0.0 --electron-version=5.0.6 --overwrite --icon=icon.ico"
+  },
+  "author": "",
+  "license": "ISC"
+}
