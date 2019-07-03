@@ -40,7 +40,7 @@ function createWindow() {
   }))
 
   //开启调试工具  
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
   win.setMenu(null)
   // 窗口关闭的监听  
   win.on('closed', (event) => {

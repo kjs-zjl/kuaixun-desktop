@@ -3594,6 +3594,7 @@ body {
   padding: 0;
   min-height: inherit;
   min-width: inherit;
+  background-color: #CDB;
 }
 
 .content {
@@ -3659,4 +3660,24 @@ body {
 
 .msg-text {
   -webkit-user-select: text;
+}
+
+.notAtchat {
+  position: absolute;
+  /* z-index: 1; */
+  width: 65%;
+  right: 0;
+  /* background-color: rgba(0, 0, 0, 0.2); */
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
+  /* border-radius: 31px; */
+}
+
+.notAtchat p {
+  display: inline-block;
+  color: #fff;
+  padding: 7px 13px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
 }
