@@ -374,12 +374,11 @@ fn.showBeCallingUI = function (type, scene, option) {
 
     /** 群视频呼叫 */
     if (scene === 'team') {
-        option.nick = getNick(option.caller);
-        var tmpUser = this.yx.cache.getTeamMemberInfo(option.caller, option.teamId);
-        if (tmpUser.nickInTeam) {
-            option.nick = option.nick === option.caller ? tmpUser.nickInTeam : option.nick;
-        }
-
+        option.nick = getNick(option.caller, '', option.teamId);
+        // var tmpUser = this.yx.cache.getTeamMemberInfo(option.caller, option.teamId);
+        // if (tmpUser.nickInTeam) {
+        //     option.nick = option.nick === option.caller ? tmpUser.nickInTeam : option.nick;
+        // }
         text = option.nick + text;
         info = this.yx.cache.getTeamById(option.teamId);
         info.nick = info.name;

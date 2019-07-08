@@ -2,7 +2,7 @@ var appUI = {
   /**
    * 当前会话聊天面板UI
    */
-  buildChatContentUI: function(id, cache) {
+  buildChatContentUI: function (id, cache) {
     var msgHtml = '',
       msgs = cache.getMsgs(id);
     if (msgs.length === 0) {
@@ -29,7 +29,7 @@ var appUI = {
             msgHtml += this.makeTimeTag(transTime(message.time));
           }
         }
-        msgHtml += this.makeChatContent(message, user);
+        msgHtml += this.makeChatContent(message, user, cache);
       }
     }
     return msgHtml;
@@ -38,7 +38,7 @@ var appUI = {
   /**
    * 更新当前会话聊天面板UI
    */
-  updateChatContentUI: function(msg, cache) {
+  updateChatContentUI: function (msg, cache) {
     var lastItem = $('#chatContent .item').last(),
       msgHtml = '',
       user = cache.getUserById(msg.from);
@@ -63,14 +63,14 @@ var appUI = {
         msgHtml += this.makeTimeTag(transTime(msg.time));
       }
     }
-    msgHtml += this.makeChatContent(msg, user);
+    msgHtml += this.makeChatContent(msg, user, cache);
     return msgHtml;
   },
 
   /**
    * 通用消息内容UI
    */
-  makeChatContent: function(message, user) {
+  makeChatContent: function (message, user, cache) {
     var msgHtml;
     //通知类消息
     if (
@@ -108,46 +108,46 @@ var appUI = {
       if (type === 'tip') {
         msgHtml = [
           '<div data-time="' +
-            message.time +
-            '" data-id="' +
-            message.idClient +
-            '" id="' +
-            message.idClient +
-            '" data-idServer="' +
-            message.idServer +
-            '">',
+          message.time +
+          '" data-id="' +
+          message.idClient +
+          '" id="' +
+          message.idClient +
+          '" data-idServer="' +
+          message.idServer +
+          '">',
           '<p class="u-notice tc item ' +
-            (from == userUID && message.idServer ? 'j-msgTip' : '') +
-            '" data-time="' +
-            message.time +
-            '" data-id="' +
-            message.idClient +
-            '" data-idServer="' +
-            message.idServer +
-            '"><span class="radius5px">' +
-            getMessage(message) +
-            '</span></p>',
+          (from == userUID && message.idServer ? 'j-msgTip' : '') +
+          '" data-time="' +
+          message.time +
+          '" data-id="' +
+          message.idClient +
+          '" data-idServer="' +
+          message.idServer +
+          '"><span class="radius5px">' +
+          getMessage(message) +
+          '</span></p>',
           '</div>'
         ].join('');
       } else {
         msgHtml = [
           '<div data-time="' +
-            message.time +
-            '" data-id="' +
-            message.idClient +
-            '" id="' +
-            message.idClient +
-            '" data-idServer="' +
-            message.idServer +
-            '" class="item item-' +
-            buildSender(message) +
-            '">',
+          message.time +
+          '" data-id="' +
+          message.idClient +
+          '" id="' +
+          message.idClient +
+          '" data-idServer="' +
+          message.idServer +
+          '" class="item item-' +
+          buildSender(message) +
+          '">',
           '<img class="img j-img" src="' +
-            getAvatar(avatar) +
-            '" data-account="' +
-            from +
-            '"/>',
-          showNick ? '<p class="nick">' + getNick(from) + '</p>' : '',
+          getAvatar(avatar) +
+          '" data-account="' +
+          from +
+          '"/>',
+          showNick ? '<p class="nick">' + getNick(from, '', message.target) + '</p>' : '',
           '<div class="msg msg-text j-msg">',
           '<div class="box">',
           '<div class="cnt">',
@@ -159,18 +159,18 @@ var appUI = {
         if (message.blacked) {
           msgHtml.push(
             '<span class="error" data-session="' +
-              message.sessionId +
-              '" data-id="' +
-              message.idClient +
-              '"><i class="icon icon-error"></i>发送失败,已被拉黑</span>'
+            message.sessionId +
+            '" data-id="' +
+            message.idClient +
+            '"><i class="icon icon-error"></i>发送失败,已被拉黑</span>'
           );
         } else if (message.status === 'fail') {
           msgHtml.push(
             '<span class="error j-resend" data-session="' +
-              message.sessionId +
-              '" data-id="' +
-              message.idClient +
-              '"><i class="icon icon-error"></i>发送失败,点击重发</span>'
+            message.sessionId +
+            '" data-id="' +
+            message.idClient +
+            '"><i class="icon icon-error"></i>发送失败,点击重发</span>'
           );
         } else {
           msgHtml.push('');
@@ -207,7 +207,7 @@ var appUI = {
   /**
    * 云记录面板UI
    */
-  buildCloudMsgUI: function(msg, cache) {
+  buildCloudMsgUI: function (msg, cache) {
     var msgHtml = '',
       len = msg.length,
       meessage;
@@ -220,7 +220,7 @@ var appUI = {
           msgHtml += this.makeTimeTag(transTime(message.time));
         }
       }
-      msgHtml += this.makeChatContent(message, cache.getUserById(message.from));
+      msgHtml += this.makeChatContent(message, cache.getUserById(message.from), cache);
     }
     return msgHtml;
   },
@@ -228,22 +228,26 @@ var appUI = {
   /**
    * 群成员列表
    */
-  buildteamMemberUI: function(list) {
-    list.nick = getNick(list.account);
-    list.nick = list.nick === list.account ? '' : list.nick;
+  buildteamMemberUI: function (list) {
+    // list.nick = getNick(list.account);
+    // list.nick = yunXin.crtSessionTeamType === 'advanced' ? getNick(list.account, '', yunXin.crtSessionAccount) : getNick(list.account);
+    // var nick = getNick(list.account);
+    var nick = yunXin.crtSessionTeamType === 'advanced' ? nick = getNick(list.account, '', yunXin.crtSessionAccount) : getNick(list.account)
     return [
       '<li data-icon="' +
-        list.avatar +
-        '" data-account="' +
-        list.account +
-        '" data-nick="' +
-        (list.nick || list.name || list.account) +
-        '">',
+      list.avatar +
+      '" data-account="' +
+      list.account +
+      '" data-nick="' +
+      // (list.nick || list.name || list.account) +
+      nick +
+      '">',
       '<i class="icon icon-radio"></i>',
       '<img src="' + getAvatar(list.avatar) + '">',
       '<span class="name">' +
-        (list.nick || list.name || list.account) +
-        '</span>',
+      // (list.nick || list.name || list.account) +
+      (nick || list.name || list.account) +
+      '</span>',
       '</li>'
     ].join('');
   },
@@ -251,7 +255,7 @@ var appUI = {
   /**
    * 黑名单
    */
-  buildBlacklist: function(data, cache) {
+  buildBlacklist: function (data, cache) {
     var html = '';
     if (data.length === 0) {
       return '';
@@ -263,8 +267,8 @@ var appUI = {
         '<img src="' + getAvatar(user.avatar) + '" class="head">',
         '<span class="nick">' + user.nick + '</span>',
         '<button class="btn radius4px btn-ok j-rm" data-id="' +
-          user.account +
-          '">解除</button>',
+        user.account +
+        '">解除</button>',
         '</li>'
       ].join('');
     }
@@ -274,7 +278,7 @@ var appUI = {
   /**
    * 系统消息
    */
-  buildSysMsgs: function(data, cache) {
+  buildSysMsgs: function (data, cache) {
     var html = '',
       item,
       team,
@@ -328,23 +332,23 @@ var appUI = {
           '<img src="images/advanced.png">',
           '<div class="text">',
           '<p><span>' +
-            (team ? team.name : item.to) +
-            '</span><b class="time">' +
-            transTime2(item.time) +
-            '</b></p>',
+          (team ? team.name : item.to) +
+          '</span><b class="time">' +
+          transTime2(item.time) +
+          '</b></p>',
           '<p><span class="first-msg">' +
-            content +
-            '</span><b class="action" data-type="' +
-            item.type +
-            '" data-idServer="' +
-            item.idServer +
-            '" data-id="' +
-            team.teamId +
-            '" data-from="' +
-            item.from +
-            '">' +
-            action +
-            '</b></p>',
+          content +
+          '</span><b class="action" data-type="' +
+          item.type +
+          '" data-idServer="' +
+          item.idServer +
+          '" data-id="' +
+          team.teamId +
+          '" data-from="' +
+          item.from +
+          '">' +
+          action +
+          '</b></p>',
           '</div>',
           '</div>'
         ].join('');
@@ -356,7 +360,7 @@ var appUI = {
     return html;
   },
   // 自定义系统通知
-  buildCustomSysMsgs: function(data, cache) {
+  buildCustomSysMsgs: function (data, cache) {
     var html = '',
       content,
       from,
@@ -367,7 +371,7 @@ var appUI = {
     if (data.length === 0) {
       return html;
     }
-    data = data.sort(function(a, b) {
+    data = data.sort(function (a, b) {
       return b.time - a.time;
     });
     for (var i = 0; i < data.length; i++) {
@@ -395,10 +399,10 @@ var appUI = {
         '<img src="' + avatar + '">',
         '<div class="text">',
         '<p><span>' +
-          nick +
-          '</span><b class="time">' +
-          transTime2(data[i].time) +
-          '</b></p>',
+        nick +
+        '</span><b class="time">' +
+        transTime2(data[i].time) +
+        '</b></p>',
         '<p><span class="first-msg">' + content + '</span></p>',
         '</div>',
         '</div>'
@@ -407,12 +411,12 @@ var appUI = {
     return html;
   },
   //聊天消息中的时间显示
-  makeTimeTag: function(time) {
+  makeTimeTag: function (time) {
     return '<p class="u-msgTime">- - - - -&nbsp;' + time + '&nbsp;- -- - -</p>';
   },
   // 多人音视频列表
-  buildmeetingMemberUI: function(data) {
-    // data.nick = getNick(data.account);
+  buildmeetingMemberUI: function (data) {
+    data.nick = yunXin.crtSessionType === 'team' && yunXin.crtSessionTeamType === 'advanced' ? getNick(data.account, '', yunXin.crtSessionAccount) : getNick(data.account);
     data.avatar = getAvatar(data.avatar);
     data.avatar = /default-icon\.png/gi.test(data.avatar) ? '' : data.avatar;
     return (
@@ -433,8 +437,8 @@ var appUI = {
     );
   },
   // 多人禁言ui
-  buildspeakBanUI: function(data) {
-    data.nick = getNick(data.account);
+  buildspeakBanUI: function (data) {
+    data.nick = getNick(data.account, '', yunXin.crtSessionAccount);
     data.nick = data.nick === data.account ? '' : data.nick;
     return (
       '<li data-icon="' +

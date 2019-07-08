@@ -445,7 +445,7 @@ YX.fn.showInfoInChat = function (account) {
     if (account == userUID) {
         return
     }
-    if (yunXin.$teamInfo.data('gtype') === 'advanced') {
+    if (yunXin.crtSessionType === 'team' && yunXin.crtSessionTeamType === 'advanced') {
         yunXin.showInfoBox(user, 'team')
     } else {
         yunXin.showInfoBox(user)
@@ -481,7 +481,8 @@ YX.fn.showInfoBox = function (user, type) {
     })
     $node.find(".u-icon").attr('src', getAvatar(user.avatar))
     $node.find(".j-nickname").text("昵称：" + user.nick)
-    $node.find(".j-nick").text(this.getNick(user.account))
+    var nick = type === "team" ? getNick(user.account, '', yunXin.crtSessionAccount) : getNick(user.account)
+    $node.find(".j-nick").text(nick)
     var avatarSrc = ""
     if (user.gender && user.gender !== "unknown") {
         avatarSrc = 'images/' + user.gender + '.png'

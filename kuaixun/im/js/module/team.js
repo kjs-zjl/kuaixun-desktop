@@ -351,7 +351,7 @@ YX.fn.showTeamInfo = function () {
 				var member = members[i],
 					account = member.account,
 					avatar = getAvatar(that.cache.getUserById(account) ? that.cache.getUserById(account).avatar : ""),
-					nick = getNick(account)
+					nick = type === "advanced" ? ((!that.cache.getFriendAlias(account) && member.nickInTeam) ? member.nickInTeam : getNick(account)) : getNick(account)
 				html += '<li data-account="' + account + '"><a href="javascript:"><img src="' + avatar + '"/>'
 				if (member.type === 'owner') {
 					html += '<i class="icon radius-circle icon-user"></i>'

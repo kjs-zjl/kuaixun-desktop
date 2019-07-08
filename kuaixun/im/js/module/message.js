@@ -583,7 +583,9 @@ YX.fn.listenAtTeamMember = function () {
     if (members.length > 1) {
       atwhoMembers.push({
         nick: '所有人',
-        account: '所有人'
+        showName: '所有人',
+        account: '所有人',
+        selectedName: '所有人'
       })
     }
     for (let i = 0; i < members.length; i++) {
@@ -602,7 +604,11 @@ YX.fn.listenAtTeamMember = function () {
     for (var i = 0, l = members.length; i < l; ++i) {
       var member = members[i],
         account = member.account;
-      member.nick = getNick(account)
+      var tmp = that.cache.getUserById(account)
+      member.nick = (tmp && tmp.nick ? tmp.nick : account)
+      member.friendAlias = that.cache.getFriendAlias(account)
+      member.showName = member.friendAlias || member.nickInTeam || member.nick
+      member.selectedName = member.nickInTeam || member.nick
       if (account !== that.accid) {
         atwhoMembers.push(member)
       }
@@ -610,9 +616,9 @@ YX.fn.listenAtTeamMember = function () {
     that.$messageText.atwho({
       at: "@",
       // displayTpl: "<li data-atwho-nick='${nick}' data-atwho-account='${account}'>${nick}</li>",
-      displayTpl: "<li data-listen-at>${nick}</li>",
+      displayTpl: "<li data-listen-at data-nickInTeam=${nickInTeam} data-friendAlias=${friendAlias} data-nick=${nick}>${showName}</li>",
       // insertTpl: '${atwho-at}${nick}',
-      insertTpl: "<span class='atwho-inserted-item' data-atwho-account='${account}'>${atwho-at}${nick}</span>",
+      insertTpl: "<span class='atwho-inserted-item' data-atwho-account='${account}'>${atwho-at}${selectedName}</span>",
       data: atwhoMembers,
       limit: 40,
       // callbacks: {
@@ -620,13 +626,15 @@ YX.fn.listenAtTeamMember = function () {
       //     console.log('beforeSave', data)
       //     return data
       //   },
-      //   beforeInsert: function (value, $li) {
-      //     // console.log('beforeInsert', value, $li, $li.attr('data-atwho-nick'), $li.attr('data-atwho-account'))
-      //     // var accid = $li.attr('data-atwho-account')
-      //     // var html = '',
-      //     //   // html += '<span data-atwho-account="${nick}"></span>'
-      //     //   return value === '@All' ? '@所有人' : value
-      //   }
+      // beforeInsert: function (value, $li) {
+      //   var account = $li.attr('data-atwho-account')
+      //   console.log(111, value, $li)
+      // console.log('beforeInsert', value, $li, $li.attr('data-atwho-nick'), $li.attr('data-atwho-account'))
+      // var accid = $li.attr('data-atwho-account')
+      // var html = '',
+      // html += '<span data-atwho-account="${nick}"></span>'
+      //   return value === '@All' ? '@所有人' : value
+      // }
       // }
     })
   }

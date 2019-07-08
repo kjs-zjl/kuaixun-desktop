@@ -604,7 +604,7 @@ body {
   position: absolute;
   top: 100px;
   z-index: 2;
-  width: 65%;
+  width: calc(100% - 270px);
   height: 100%;
   top: 0;
   right: 0;
@@ -3577,6 +3577,52 @@ body {
   background-position: -22px -262px;
 }
 
+/* 图片预览样式修改 */
+.magnify-modal .magnify-stage {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-width: 0;
+}
+
+.magnify-modal .magnify-button {
+  opacity: 0.5;
+}
+
+.magnify-modal .magnify-button:hover {
+  opacity: 1;
+}
+
+.magnify-modal .magnify-button-close {
+  width: 80px;
+  height: 80px;
+}
+
+.magnify-modal .magnify-button-prev,
+.magnify-modal .magnify-button-next {
+  width: 80px;
+  height: 80px;
+  position: fixed;
+  top: 50%;
+  margin-top: -40px;
+}
+
+.magnify-modal .magnify-button-prev {
+  left: 20px;
+
+}
+
+.magnify-modal .magnify-button-next {
+  right: 20px;
+}
+
+.magnify-modal .magnify-button-prev:hover,
+.magnify-modal .magnify-button-next:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 以下是桌面端样式 */
 * {
   box-sizing: border-box;
 }
@@ -3602,7 +3648,7 @@ body {
 }
 
 .left-panel {
-  width: 35%;
+  width: 270px;
   /* max-width: 36%; */
   /* max-width: 300px; */
   border: none;
@@ -3620,7 +3666,7 @@ body {
 .right-panel {
   border-radius: 0;
   height: 100%;
-  width: 65%;
+  width: calc(100% - 270px);
   margin-left: 0;
   float: right;
 }
@@ -3665,7 +3711,7 @@ body {
 .notAtchat {
   position: absolute;
   /* z-index: 1; */
-  width: 65%;
+  width: calc(100% - 270px);
   right: 0;
   /* background-color: rgba(0, 0, 0, 0.2); */
   text-align: center;

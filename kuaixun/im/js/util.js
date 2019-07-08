@@ -33,7 +33,7 @@ function readCookie(name) {
 
 //删除cookies
 function delCookie(name) {
-    localStorage.removeItem(name);
+    localStorage.removeItem(name)
     // var cval = readCookie(name);
     // if (cval != null) {
     //     document.cookie = name + "=;path=/;expires=" + (new Date(0)).toGMTString();
@@ -206,15 +206,52 @@ function buildSessionMsg(msg) {
  * @param  {object} msg 消息
  * @return {string} str
  */
+// emojiIndex是为了表情图的地址不重复
+var emojiIndex = 0;
+
 function getMessage(msg) {
     var str = ''
     var url = msg.file ? _$escape(msg.file.url) : ''
     var sentStr = (msg.flow === 'in') ? "收到" : "发送";
     switch (msg.type) {
         case 'text':
-            var re = /(http:\/\/[\w.\/]+)(?![^<]+>)/gi; // 识别链接
-            str = _$escape(msg.text);
-            str = str.replace(re, "<a href='$1' target='_blank'>$1</a>");
+            function IsURL(str_url) {
+                var strRegex = "^((https|http|ftp|rtsp|mms)?://)" +
+                    "?(([0-9a-zA-Z_!~*'().&=+$%-]+: )?[0-9a-zA-Z_!~*'().&=+$%-]+@)?" //ftp的user@ 
+                    +
+                    "(([0-9]{1,3}\.){3}[0-9]{1,3}" // IP形式的URL- 199.194.52.184 
+                    +
+                    "|" // 允许IP和DOMAIN（域名）
+                    +
+                    "([0-9a-zA-Z_!~*'()-]+\.)*" // 域名- www. 
+                    +
+                    "([0-9a-zA-Z][0-9a-zA-Z-]{0,61})?[0-9a-zA-Z]\." // 二级域名 
+                    +
+                    "[a-zA-Z]{1000,1000})" // first level domain- .com or .museum 
+                    +
+                    "(:[0-9]{1,4})?" // 端口- :80 
+                    +
+                    "((/?)|" // a slash isn't required if there is no file name 
+                    +
+                    "(/[0-9a-zA-Z_!~*'().;?:@&=+$,%#-]+)+/?)$";
+                var re = new RegExp(strRegex);
+                //re.test()
+                if (re.test(str_url)) {
+                    return (true);
+                } else {
+                    return (false);
+                }
+            }
+            str = _$escape(msg.text)
+            if (IsURL(str)) {
+                str = `<a href=${str} target='_blank'>${str}</a>`
+            } else {
+                var re = /((((http:|https:)\/\/[\w.\/]+)(?![^<]+>)))/gi; // 识别链接
+                str = str.replace(re, "<a href='$1' target='_blank'>$1</a>");
+            }
+            // var re = /(http:\/\/[\w.\/]+)(?![^<]+>)/gi; // 识别链接
+            // str = _$escape(msg.text);
+            // str = str.replace(re, "<a href='$1' target='_blank'>$1</a>");
 
             str = buildEmoji(str);
             str = "<div class='f-maxWid'>" + str + "</div>"
@@ -233,7 +270,8 @@ function getMessage(msg) {
                 //     url: msg.file.url
                 // })
                 // str = '<a href="' + msg.file.url + '?imageView" target="_blank"><img onload="loadImg()" data-src="' + msg.file.url + '" src="' + msg.file.url + '?imageView&thumbnail=200x0&quality=85"/></a>';
-                str = '<a href="' + url + '" target="_blank"><img onload="loadImg()" data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/></a>';
+                // str = '<a href="' + url + '" target="_blank"><img onload="loadImg()" data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/></a>';
+                str = '<img onload="loadImg()" onclick="previewPic()" class="previewImg" data-caption=" " data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/>';
             }
             break;
         case 'file':
@@ -293,9 +331,10 @@ function getMessage(msg) {
             } else if (content.type === 2) {
                 str = sentStr + '一条[阅后即焚]消息,请到手机或电脑客户端查看';
             } else if (content.type === 3) {
+                emojiIndex++
                 var catalog = _$escape(content.data.catalog),
-                    chartvar = _$escape(content.data.chartlet);
-                str = '<img class="chartlet" onload="loadImg()" src="./images/' + catalog + '/' + chartvar + '.png">';
+                    chartvar = _$escape(content.data.chartlet),
+                    str = '<img onload="loadImg()" onclick="previewPic()" class="previewImg chartlet" data-caption=" " data-src="./images/' + catalog + '/' + chartvar + '.png?emojiIndex=' + emojiIndex + '" src="./images/' + catalog + '/' + chartvar + '.png' + '?emojiIndex=' + emojiIndex + '">';
             } else if (content.type == 4) {
                 str = msg.fromNick + '发起了[白板互动]';
             } else {
@@ -528,7 +567,7 @@ function transNotification(item) {
                 if (accounts[i] === userUID) {
                     member.push("你");
                 } else {
-                    member.push(getNick(accounts[i]));
+                    member.push(getNick(accounts[i], '', item.target));
                 }
 
             }
@@ -542,7 +581,7 @@ function transNotification(item) {
                 if (accounts[i] === userUID) {
                     member.push("你");
                 } else {
-                    member.push(getNick(accounts[i]));
+                    member.push(getNick(accounts[i], '', item.target));
                 }
             }
             member = member.join(",");
@@ -554,7 +593,7 @@ function transNotification(item) {
             return '管理员权限发生了变更'
             break
         case 'leaveTeam':
-            var member = (item.from === userUID) ? "你" : getNick(item.from);
+            var member = (item.from === userUID) ? "你" : getNick(item.from, '', item.target);
             str = member + "退出了" + tName;
             return str;
             break;
@@ -575,10 +614,10 @@ function transNotification(item) {
                         break;
                 }
             } else if (item.attach.team.name) {
-                var user = (item.from === userUID) ? "你" : getNick(item.from);
+                var user = (item.from === userUID) ? "你" : getNick(item.from, '', item.target);
                 str = user + "更新" + tName + "名称为" + item.attach.team.name;
             } else if (item.attach.team.intro) {
-                var user = (item.from === userUID) ? "你" : getNick(item.from);
+                var user = (item.from === userUID) ? "你" : getNick(item.from, '', item.target);
                 str = user + "更新群介绍为" + item.attach.team.intro;
             } else if (item.attach.team.inviteMode) {
                 str = item.attach.team.inviteMode === 'manager' ? '邀请他人权限为管理员' : '邀请他人权限为所有人';
@@ -587,7 +626,7 @@ function transNotification(item) {
             } else if (item.attach.team.updateTeamMode) {
                 str = item.attach.team.updateTeamMode === 'manager' ? '群资料修改权限为管理员' : '群资料修改权限为所有人';
             } else if (item.attach.team.avatar) {
-                var user = (item.from === userUID) ? "你" : getNick(item.from);
+                var user = (item.from === userUID) ? "你" : getNick(item.from, '', item.target);
                 str = user + "更改了群头像";
             } else {
                 str = '更新群消息';
@@ -598,11 +637,11 @@ function transNotification(item) {
             var member,
                 admin;
             if (item.from === item.attach.account) {
-                member = (item.from === userUID) ? "你" : getNick(item.from);
+                member = (item.from === userUID) ? "你" : getNick(item.from, '', item.target);
                 str = member ? member : item.from + "加入了群";
             } else {
-                admin = (item.attach.account === userUID) ? "你" : getNick(item.attach.account);
-                member = (item.from === userUID) ? "你" : getNick(item.from);
+                admin = (item.attach.account === userUID) ? "你" : getNick(item.attach.account, '', item.target);
+                member = (item.from === userUID) ? "你" : getNick(item.from, '', item.target);
                 str = member + '接受了' + admin + "的入群邀请";
             }
             return str;
@@ -611,17 +650,17 @@ function transNotification(item) {
             var member,
                 admin;
             if (item.from === item.attach.account) {
-                member = (item.from === userUID) ? "你" : getNick(item.from);
+                member = (item.from === userUID) ? "你" : getNick(item.from, '', item.target);
                 str = member + "加入了群";
             } else {
-                member = (item.attach.account === userUID) ? "你" : getNick(item.attach.account);
-                admin = (item.from === userUID) ? "你" : getNick(item.from);
+                member = (item.attach.account === userUID) ? "你" : getNick(item.attach.account, '', item.target);
+                admin = (item.from === userUID) ? "你" : getNick(item.from, '', item.target);
                 str = admin + '通过了' + member + "的入群申请";
             }
             return str;
             break;
         case 'dismissTeam':
-            var member = (item.from === userUID) ? "你" : getNick(item.from);
+            var member = (item.from === userUID) ? "你" : getNick(item.from, '', item.target);
             str = member + "解散了群";
             return str;
             break;
@@ -631,7 +670,7 @@ function transNotification(item) {
             if (account === userUID) {
                 name = '你';
             } else {
-                name = getNick(account);
+                name = getNick(account, '', item.target);
             }
             str = name + '被' + ((item.from === userUID) ? '你' : '管理员') + (item.attach.mute ? '禁言' : '解除禁言');
             return str;
@@ -653,9 +692,144 @@ function removeChatVernier(account) {
     }
 }
 
+/**
+ * 图片预览
+ */
 function loadImg() {
     $('#chatContent').scrollTop(99999);
+    // document.addEventListener('click', function (ev) {
+    //     console.log(ev.target)
+    // })
+    $('.previewImg').click(function () {
+        previewPic()
+    })
 }
+
+function previewPic() {
+    if ($('#cloudMsgContainer').is(":hidden")) {
+        console.log(333)
+        $('.chat-box').find('.previewImg').magnify({
+            initMaximized: true,
+            multiInstances: false,
+            headToolbar: [
+                'close'
+            ],
+            footToolbar: [
+                'zoomIn',
+                'zoomOut',
+                'prev',
+                'fullscreen',
+                'next',
+                'actualSize',
+                'rotateLeft',
+                'rotateRight'
+            ],
+            progressiveLoading: false,
+            callbacks: {
+                beforeOpen: function (el) {},
+                opened: function (el) {
+                    setTimeout(() => {
+                        console.log(this)
+                        var str = '第' + (this.groupIndex + 1) + '张图片，共' + this.groupData.length + '张'
+                        this.$title.text(str)
+                    }, 0);
+                    // 第一张
+                    this.groupIndex === 0 && this.$prev.hide()
+                    // 最后一张
+                    this.groupIndex + 1 === this.groupData.length && this.$next.hide()
+                    $('.magnify-stage').click(function (ev) {
+                        if (!$(ev.target).is('.magnify-image')) {
+                            $('.magnify-modal').remove()
+                        }
+                    })
+                    // Will fire after modal is opened
+                },
+                beforeClose: function (el) {
+                    // Will fire before modal is closed
+                },
+                closed: function (el) {
+                    // Will fire after modal is closed
+                },
+                beforeChange: function (index) {
+                    // console.log(index)
+                    // Will fire before image is changed
+                    // The arguments is the current image index of image group
+                },
+                changed: function (index) {
+                    var str = '第' + (this.groupIndex + 1) + '张图片，共' + this.groupData.length + '张'
+                    this.$title.text(str)
+                    // 第一张
+                    this.groupIndex === 0 ? this.$prev.hide() : this.$prev.show()
+                    // 最后一张
+                    this.groupIndex + 1 === this.groupData.length ? this.$next.hide() : this.$next.show()
+                    // Will fire after image is changed
+                    // The arguments is the next image index of image group
+                }
+            }
+        });
+    } else {
+        console.log(444)
+        $('.cloud-msg-container').find('.previewImg').magnify({
+            initMaximized: true,
+            headToolbar: [
+                'close'
+            ],
+            footToolbar: [
+                'zoomIn',
+                'zoomOut',
+                'prev',
+                'fullscreen',
+                'next',
+                'actualSize',
+                'rotateLeft',
+                'rotateRight'
+            ],
+            progressiveLoading: false,
+            callbacks: {
+                beforeOpen: function (el) {},
+                opened: function (el) {
+                    setTimeout(() => {
+                        var str = '第' + (this.groupIndex + 1) + '张图片，共' + this.groupData.length + '张'
+                        this.$title.text(str)
+                    }, 0);
+                    // 第一张
+                    this.groupIndex === 0 && this.$prev.hide()
+                    // 最后一张
+                    this.groupIndex + 1 === this.groupData.length && this.$next.hide()
+                    $('.magnify-stage').click(function (ev) {
+                        if (!$(ev.target).is('.magnify-image')) {
+                            $('.magnify-modal').remove()
+                        }
+                    })
+                    // Will fire after modal is opened
+                },
+                beforeClose: function (el) {
+                    // Will fire before modal is closed
+                },
+                closed: function (el) {
+                    // Will fire after modal is closed
+                },
+                beforeChange: function (index) {
+                    // console.log(index)
+                    // Will fire before image is changed
+                    // The arguments is the current image index of image group
+                },
+                changed: function (index) {
+                    var str = '第' + (this.groupIndex + 1) + '张图片，共' + this.groupData.length + '张'
+                    this.$title.text(str)
+                    // 第一张
+                    this.groupIndex === 0 ? this.$prev.hide() : this.$prev.show()
+                    // 最后一张
+                    this.groupIndex + 1 === this.groupData.length ? this.$next.hide() : this.$next.show()
+                    // Will fire after image is changed
+                    // The arguments is the next image index of image group
+                }
+            }
+        });
+    }
+}
+
+
 
 function getAvatar(url) {
     var re = /^((http|https|ftp):\/\/)?(\w(\:\w)?@)?([0-9a-z_-]+\.)*?([a-z0-9-]+\.[a-z]{2,6}(\.[a-z]{2})?(\:[0-9]{2,6})?)((\/[^?#<>\/\\*":]*)+(\?[^#]*)?(#.*)?)?$/i;
@@ -670,13 +844,41 @@ function getAvatar(url) {
 }
 
 //或者备注名或者昵称
-function getNick(account, cache) {
+function getNick(account, cache, teamId) {
     cache = cache || yunXin.cache;
     var nick = cache.getFriendAlias(account),
-        tmp = cache.getUserById(account);
-    nick = nick || (tmp && tmp.nick ? tmp.nick : account)
+        tmp = cache.getUserById(account),
+        teamMemberInfo;
+    if (teamId && !nick) {
+        teamMemberInfo = cache.getTeamMemberInfo(account, teamId)
+    }
+    nick = nick || (teamMemberInfo && teamMemberInfo.nickInTeam ? teamMemberInfo.nickInTeam : (tmp && tmp.nick ? tmp.nick : account))
     return nick;
 }
+
+function openChatBoxAgain(account, scene, cache) {
+    if (cache.getTeamMembers(account)) {
+        return
+    }
+    setTimeout(() => {
+        yunXin.openChatBox(account, scene)
+        openChatBoxAgain(account, scene, cache)
+    }, 100)
+}
+
+function getTeamMemberInfoAgain(account, scene) {
+    if (scene === 'p2p') {
+        return
+    }
+    var cache = yunXin.cache
+    openChatBoxAgain(account, scene, cache)
+    // if (!cache.getTeamMembers(account)) {
+    //     setTimeout(function () {
+    //         yunXin.openChatBox(account, scene)
+    //     }, 80)
+    // }
+}
+
 //拿所有消息中涉及到的账号（为了正确显示昵称=。=）
 function getAllAccount(obj) {
     if (!obj) {
