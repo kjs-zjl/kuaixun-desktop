@@ -701,13 +701,13 @@ function loadImg() {
     //     console.log(ev.target)
     // })
     $('.previewImg').click(function () {
+        console.log(111111)
         previewPic()
     })
 }
 
 function previewPic() {
     if ($('#cloudMsgContainer').is(":hidden")) {
-        console.log(333)
         $('.chat-box').find('.previewImg').magnify({
             initMaximized: true,
             multiInstances: false,
@@ -729,7 +729,6 @@ function previewPic() {
                 beforeOpen: function (el) {},
                 opened: function (el) {
                     setTimeout(() => {
-                        console.log(this)
                         var str = '第' + (this.groupIndex + 1) + '张图片，共' + this.groupData.length + '张'
                         this.$title.text(str)
                     }, 0);
@@ -768,7 +767,6 @@ function previewPic() {
             }
         });
     } else {
-        console.log(444)
         $('.cloud-msg-container').find('.previewImg').magnify({
             initMaximized: true,
             headToolbar: [
@@ -784,7 +782,7 @@ function previewPic() {
                 'rotateLeft',
                 'rotateRight'
             ],
-            progressiveLoading: false,
+            // progressiveLoading: false,
             callbacks: {
                 beforeOpen: function (el) {},
                 opened: function (el) {

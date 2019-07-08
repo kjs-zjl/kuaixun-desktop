@@ -22,6 +22,7 @@ function createWindow() {
   win = new BrowserWindow({
     // width: 800,
     // height: 600,
+    autoHideMenuBar: true,
     minWidth: 800,
     minHeight: 600,
     icon: path.join(__dirname, 'icon.ico')
@@ -29,19 +30,18 @@ function createWindow() {
     // webPreferences: {
     //   nodeIntegration: false
     // }
-    // autoHideMenuBar: true
   })
 
   // and load the index.html of the app.
   win.loadURL(url.format({
-    pathname: path.join(__dirname, '/kuaixun/index.html'),
+    pathname: path.join(__dirname, '/app/index.html'),
     protocol: 'file:',
     slashes: true
   }))
 
   //开启调试工具  
   win.webContents.openDevTools()
-  win.setMenu(null)
+  // win.setMenu(null)
   // 窗口关闭的监听  
   win.on('closed', (event) => {
     //回收BrowserWindow对象
