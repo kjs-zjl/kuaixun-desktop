@@ -855,7 +855,7 @@ function getNick(account, cache, teamId) {
 }
 
 function openChatBoxAgain(account, scene, cache) {
-    if (cache.getTeamMembers(account)) {
+    if (cache.getTeamMembers(account) || !cache.getTeamById(account)) {
         return
     }
     setTimeout(() => {
