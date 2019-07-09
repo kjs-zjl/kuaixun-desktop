@@ -171,7 +171,7 @@ function createPreviewImgWindow(params) {
     // 向子窗口发送数据
     previewImgWin.webContents.send('imgMessage', params);
   });
-  // previewImgWin.once('ready-to-show', () => {
-  previewImgWin.show();
-  // });
+  previewImgWin.once('ready-to-show', () => {
+    previewImgWin.show();
+  });
 }

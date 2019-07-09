@@ -92,7 +92,7 @@ YX.fn.openFlashTitle = function () {
  * 关闭浏览器标题栏闪烁效果
  */
 YX.fn.closeFlashTitle = function () {
-  document.title = "快讯网页版"
+  document.title = "快讯客户端"
   allowFlashTitle = false
   flashTitleRun = false
 }

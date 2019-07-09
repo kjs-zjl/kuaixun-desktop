@@ -698,35 +698,6 @@ function removeChatVernier(account) {
 function loadImg() {
     $('#chatContent').scrollTop(99999);
 }
-/**
- * 图片预览
- */
-const ipc = require('electron').ipcRenderer
-$('#chatContent').on('click', '.previewImg', function (index) {
-    var eles = $('#chatContent .previewImg')
-    var index = eles.index(this)
-    funPreviewPic(eles, index)
-})
-$('#cloudMsgContainer').on('click', '.previewImg', function (index) {
-    var eles = $('#cloudMsgContainer .previewImg')
-    var index = eles.index(this)
-    funPreviewPic(eles, index)
-})
-
-function funPreviewPic(eles, index) {
-    var array = []
-    for (let i = 0; i < eles.length; i++) {
-        var ele = eles[i];
-        var imgUrl = $(ele).attr('data-src')
-        array.push(imgUrl)
-    }
-    ipc.send('previewPic', {
-        data: array,
-        index: index
-    })
-}
-
-
 
 function getAvatar(url) {
     var re = /^((http|https|ftp):\/\/)?(\w(\:\w)?@)?([0-9a-z_-]+\.)*?([a-z0-9-]+\.[a-z]{2,6}(\.[a-z]{2})?(\:[0-9]{2,6})?)((\/[^?#<>\/\\*":]*)+(\?[^#]*)?(#.*)?)?$/i;
