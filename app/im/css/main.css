@@ -495,6 +495,7 @@ body {
 .msg .cnt img {
   width: 100%;
   max-width: 290px;
+  cursor: pointer;
   _width: 290px;
 }
 
@@ -3575,51 +3576,6 @@ body {
 
 .dialog-team-container .icon-micro.cur {
   background-position: -22px -262px;
-}
-
-/* 图片预览样式修改 */
-.magnify-modal .magnify-stage {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  border-width: 0;
-}
-
-.magnify-modal .magnify-button {
-  opacity: 0.5;
-}
-
-.magnify-modal .magnify-button:hover {
-  opacity: 1;
-}
-
-.magnify-modal .magnify-button-close {
-  width: 80px;
-  height: 80px;
-}
-
-.magnify-modal .magnify-button-prev,
-.magnify-modal .magnify-button-next {
-  width: 80px;
-  height: 80px;
-  position: fixed;
-  top: 50%;
-  margin-top: -40px;
-}
-
-.magnify-modal .magnify-button-prev {
-  left: 20px;
-
-}
-
-.magnify-modal .magnify-button-next {
-  right: 20px;
-}
-
-.magnify-modal .magnify-button-prev:hover,
-.magnify-modal .magnify-button-next:hover {
-  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* 以下是桌面端样式 */

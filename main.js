@@ -4,10 +4,12 @@ const {
   app,
   Menu,
   Tray,
-  BrowserWindow
+  BrowserWindow,
+  globalShortcut
 } = require('electron')
 const path = require('path')
 const url = require('url')
+const ipc = require('electron').ipcMain
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -25,11 +27,11 @@ function createWindow() {
     autoHideMenuBar: true,
     minWidth: 800,
     minHeight: 600,
-    icon: path.join(__dirname, 'icon.ico')
+    icon: path.join(__dirname, 'icon.ico'),
     // frame: false,
-    // webPreferences: {
-    //   nodeIntegration: false
-    // }
+    webPreferences: {
+      nodeIntegration: true
+    }
   })
 
   // and load the index.html of the app.
@@ -127,3 +129,49 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+// 创建图片预览窗口
+let previewImgWin;
+// 监听渲染进程事件，并接收数据，将数据传递给子窗口
+ipc.on('previewPic', (event, params) => {
+  createPreviewImgWindow(params)
+})
+
+function createPreviewImgWindow(params) {
+  // 创建浏览器窗口。
+  previewImgWin = new BrowserWindow({
+    frame: false,
+    parent: win, //win是主窗口
+    show: false,
+    transparent: true,
+    modal: true,
+    webPreferences: {
+      nodeIntegration: true
+    },
+    resizable: false
+  })
+  // 全屏
+  previewImgWin.setFullScreen(true)
+  //开启调试工具  
+  // previewImgWin.webContents.openDevTools()
+  // 去除菜单
+  previewImgWin.setMenu(null)
+  // 加载页面
+  previewImgWin.loadURL(path.join('file:', __dirname, 'app/im/previewImg.html')); //new.html是新开窗口的渲染进程
+  // 监听窗口关闭
+  previewImgWin.on('closed', () => {
+    previewImgWin = null
+  })
+  // previewImgWin.once('show', function () {
+  //   console.log(22222222222)
+  //   // 向子窗口发送数据
+  //   previewImgWin.webContents.send('imgMessage', params);
+  // })
+  previewImgWin.webContents.on('did-finish-load', function () {
+    // 向子窗口发送数据
+    previewImgWin.webContents.send('imgMessage', params);
+  });
+  // previewImgWin.once('ready-to-show', () => {
+  previewImgWin.show();
+  // });
+}

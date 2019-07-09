@@ -215,43 +215,43 @@ function getMessage(msg) {
     var sentStr = (msg.flow === 'in') ? "收到" : "发送";
     switch (msg.type) {
         case 'text':
-            function IsURL(str_url) {
-                var strRegex = "^((https|http|ftp|rtsp|mms)?://)" +
-                    "?(([0-9a-zA-Z_!~*'().&=+$%-]+: )?[0-9a-zA-Z_!~*'().&=+$%-]+@)?" //ftp的user@ 
-                    +
-                    "(([0-9]{1,3}\.){3}[0-9]{1,3}" // IP形式的URL- 199.194.52.184 
-                    +
-                    "|" // 允许IP和DOMAIN（域名）
-                    +
-                    "([0-9a-zA-Z_!~*'()-]+\.)*" // 域名- www. 
-                    +
-                    "([0-9a-zA-Z][0-9a-zA-Z-]{0,61})?[0-9a-zA-Z]\." // 二级域名 
-                    +
-                    "[a-zA-Z]{1000,1000})" // first level domain- .com or .museum 
-                    +
-                    "(:[0-9]{1,4})?" // 端口- :80 
-                    +
-                    "((/?)|" // a slash isn't required if there is no file name 
-                    +
-                    "(/[0-9a-zA-Z_!~*'().;?:@&=+$,%#-]+)+/?)$";
-                var re = new RegExp(strRegex);
-                //re.test()
-                if (re.test(str_url)) {
-                    return (true);
-                } else {
-                    return (false);
-                }
-            }
-            str = _$escape(msg.text)
-            if (IsURL(str)) {
-                str = `<a href=${str} target='_blank'>${str}</a>`
-            } else {
-                var re = /((((http:|https:)\/\/[\w.\/]+)(?![^<]+>)))/gi; // 识别链接
-                str = str.replace(re, "<a href='$1' target='_blank'>$1</a>");
-            }
-            // var re = /(http:\/\/[\w.\/]+)(?![^<]+>)/gi; // 识别链接
-            // str = _$escape(msg.text);
-            // str = str.replace(re, "<a href='$1' target='_blank'>$1</a>");
+            // function IsURL(str_url) {
+            //     var strRegex = "^((https|http|ftp|rtsp|mms)?://)" +
+            //         "?(([0-9a-zA-Z_!~*'().&=+$%-]+: )?[0-9a-zA-Z_!~*'().&=+$%-]+@)?" //ftp的user@ 
+            //         +
+            //         "(([0-9]{1,3}\.){3}[0-9]{1,3}" // IP形式的URL- 199.194.52.184 
+            //         +
+            //         "|" // 允许IP和DOMAIN（域名）
+            //         +
+            //         "([0-9a-zA-Z_!~*'()-]+\.)*" // 域名- www. 
+            //         +
+            //         "([0-9a-zA-Z][0-9a-zA-Z-]{0,61})?[0-9a-zA-Z]\." // 二级域名 
+            //         +
+            //         "[a-zA-Z]{1000,1000})" // first level domain- .com or .museum 
+            //         +
+            //         "(:[0-9]{1,4})?" // 端口- :80 
+            //         +
+            //         "((/?)|" // a slash isn't required if there is no file name 
+            //         +
+            //         "(/[0-9a-zA-Z_!~*'().;?:@&=+$,%#-]+)+/?)$";
+            //     var re = new RegExp(strRegex);
+            //     //re.test()
+            //     if (re.test(str_url)) {
+            //         return (true);
+            //     } else {
+            //         return (false);
+            //     }
+            // }
+            // str = _$escape(msg.text)
+            // if (IsURL(str)) {
+            //     str = `<a href=${str} target='_blank'>${str}</a>`
+            // } else {
+            //     var re = /((((http:|https:)\/\/[\w.\/]+)(?![^<]+>)))/gi; // 识别链接
+            //     str = str.replace(re, "<a href='$1' target='_blank'>$1</a>");
+            // }
+            var re = /(http:\/\/[\w.\/]+)(?![^<]+>)/gi; // 识别链接
+            str = _$escape(msg.text);
+            str = str.replace(re, "<a href='$1' target='_blank'>$1</a>");
 
             str = buildEmoji(str);
             str = "<div class='f-maxWid'>" + str + "</div>"
@@ -271,7 +271,8 @@ function getMessage(msg) {
                 // })
                 // str = '<a href="' + msg.file.url + '?imageView" target="_blank"><img onload="loadImg()" data-src="' + msg.file.url + '" src="' + msg.file.url + '?imageView&thumbnail=200x0&quality=85"/></a>';
                 // str = '<a href="' + url + '" target="_blank"><img onload="loadImg()" data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/></a>';
-                str = '<img onload="loadImg()" onclick="previewPic()" class="previewImg" data-caption=" " data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/>';
+                str = '<img onload="loadImg()" class="previewImg" data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/>';
+
             }
             break;
         case 'file':
@@ -334,7 +335,8 @@ function getMessage(msg) {
                 emojiIndex++
                 var catalog = _$escape(content.data.catalog),
                     chartvar = _$escape(content.data.chartlet),
-                    str = '<img onload="loadImg()" onclick="previewPic()" class="previewImg chartlet" data-caption=" " data-src="./images/' + catalog + '/' + chartvar + '.png?emojiIndex=' + emojiIndex + '" src="./images/' + catalog + '/' + chartvar + '.png' + '?emojiIndex=' + emojiIndex + '">';
+                    str = '<img onload="loadImg()" class="previewImg chartlet" data-src="./images/' + catalog + '/' + chartvar + '.png?emojiIndex=' + emojiIndex + '" src="./images/' + catalog + '/' + chartvar + '.png' + '?emojiIndex=' + emojiIndex + '">';
+
             } else if (content.type == 4) {
                 str = msg.fromNick + '发起了[白板互动]';
             } else {
@@ -692,139 +694,36 @@ function removeChatVernier(account) {
     }
 }
 
+
+function loadImg() {
+    $('#chatContent').scrollTop(99999);
+}
 /**
  * 图片预览
  */
-function loadImg() {
-    $('#chatContent').scrollTop(99999);
-    // document.addEventListener('click', function (ev) {
-    //     console.log(ev.target)
-    // })
-    $('.previewImg').click(function () {
-        console.log(111111)
-        previewPic()
-    })
-}
+const ipc = require('electron').ipcRenderer
+$('#chatContent').on('click', '.previewImg', function (index) {
+    var eles = $('#chatContent .previewImg')
+    var index = eles.index(this)
+    funPreviewPic(eles, index)
+})
+$('#cloudMsgContainer').on('click', '.previewImg', function (index) {
+    var eles = $('#cloudMsgContainer .previewImg')
+    var index = eles.index(this)
+    funPreviewPic(eles, index)
+})
 
-function previewPic() {
-    if ($('#cloudMsgContainer').is(":hidden")) {
-        $('.chat-box').find('.previewImg').magnify({
-            initMaximized: true,
-            multiInstances: false,
-            headToolbar: [
-                'close'
-            ],
-            footToolbar: [
-                'zoomIn',
-                'zoomOut',
-                'prev',
-                'fullscreen',
-                'next',
-                'actualSize',
-                'rotateLeft',
-                'rotateRight'
-            ],
-            progressiveLoading: false,
-            callbacks: {
-                beforeOpen: function (el) {},
-                opened: function (el) {
-                    setTimeout(() => {
-                        var str = '第' + (this.groupIndex + 1) + '张图片，共' + this.groupData.length + '张'
-                        this.$title.text(str)
-                    }, 0);
-                    // 第一张
-                    this.groupIndex === 0 && this.$prev.hide()
-                    // 最后一张
-                    this.groupIndex + 1 === this.groupData.length && this.$next.hide()
-                    $('.magnify-stage').click(function (ev) {
-                        if (!$(ev.target).is('.magnify-image')) {
-                            $('.magnify-modal').remove()
-                        }
-                    })
-                    // Will fire after modal is opened
-                },
-                beforeClose: function (el) {
-                    // Will fire before modal is closed
-                },
-                closed: function (el) {
-                    // Will fire after modal is closed
-                },
-                beforeChange: function (index) {
-                    // console.log(index)
-                    // Will fire before image is changed
-                    // The arguments is the current image index of image group
-                },
-                changed: function (index) {
-                    var str = '第' + (this.groupIndex + 1) + '张图片，共' + this.groupData.length + '张'
-                    this.$title.text(str)
-                    // 第一张
-                    this.groupIndex === 0 ? this.$prev.hide() : this.$prev.show()
-                    // 最后一张
-                    this.groupIndex + 1 === this.groupData.length ? this.$next.hide() : this.$next.show()
-                    // Will fire after image is changed
-                    // The arguments is the next image index of image group
-                }
-            }
-        });
-    } else {
-        $('.cloud-msg-container').find('.previewImg').magnify({
-            initMaximized: true,
-            headToolbar: [
-                'close'
-            ],
-            footToolbar: [
-                'zoomIn',
-                'zoomOut',
-                'prev',
-                'fullscreen',
-                'next',
-                'actualSize',
-                'rotateLeft',
-                'rotateRight'
-            ],
-            // progressiveLoading: false,
-            callbacks: {
-                beforeOpen: function (el) {},
-                opened: function (el) {
-                    setTimeout(() => {
-                        var str = '第' + (this.groupIndex + 1) + '张图片，共' + this.groupData.length + '张'
-                        this.$title.text(str)
-                    }, 0);
-                    // 第一张
-                    this.groupIndex === 0 && this.$prev.hide()
-                    // 最后一张
-                    this.groupIndex + 1 === this.groupData.length && this.$next.hide()
-                    $('.magnify-stage').click(function (ev) {
-                        if (!$(ev.target).is('.magnify-image')) {
-                            $('.magnify-modal').remove()
-                        }
-                    })
-                    // Will fire after modal is opened
-                },
-                beforeClose: function (el) {
-                    // Will fire before modal is closed
-                },
-                closed: function (el) {
-                    // Will fire after modal is closed
-                },
-                beforeChange: function (index) {
-                    // console.log(index)
-                    // Will fire before image is changed
-                    // The arguments is the current image index of image group
-                },
-                changed: function (index) {
-                    var str = '第' + (this.groupIndex + 1) + '张图片，共' + this.groupData.length + '张'
-                    this.$title.text(str)
-                    // 第一张
-                    this.groupIndex === 0 ? this.$prev.hide() : this.$prev.show()
-                    // 最后一张
-                    this.groupIndex + 1 === this.groupData.length ? this.$next.hide() : this.$next.show()
-                    // Will fire after image is changed
-                    // The arguments is the next image index of image group
-                }
-            }
-        });
+function funPreviewPic(eles, index) {
+    var array = []
+    for (let i = 0; i < eles.length; i++) {
+        var ele = eles[i];
+        var imgUrl = $(ele).attr('data-src')
+        array.push(imgUrl)
     }
+    ipc.send('previewPic', {
+        data: array,
+        index: index
+    })
 }
 
 
@@ -870,11 +769,6 @@ function getTeamMemberInfoAgain(account, scene) {
     }
     var cache = yunXin.cache
     openChatBoxAgain(account, scene, cache)
-    // if (!cache.getTeamMembers(account)) {
-    //     setTimeout(function () {
-    //         yunXin.openChatBox(account, scene)
-    //     }, 80)
-    // }
 }
 
 //拿所有消息中涉及到的账号（为了正确显示昵称=。=）

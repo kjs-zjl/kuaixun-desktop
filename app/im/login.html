@@ -41,6 +41,11 @@
 		<p>&copy;快讯版权所有</p>
 	</div> -->
 	<script src="../3rd/jquery-1.11.3.min.js"></script>
+	<script>
+		if (typeof module === 'object') {
+			window.jQuery = window.$ = module.exports;
+		};
+	</script>
 	<script src="js/config.js"></script>
 	<script src="js/md5.js"></script>
 	<script src="js/util.js"></script>

@@ -674,6 +674,11 @@
 
 	<script src="./js/3rd/whiteboard.js"></script>
 	<script src="../3rd/jquery-1.11.3.min.js"></script>
+	<script>
+		if (typeof module === 'object') {
+			window.jQuery = window.$ = module.exports;
+		};
+	</script>
 
 	<!--<script src="../3rd/zepto.min.js"></script>-->
 	<script>
