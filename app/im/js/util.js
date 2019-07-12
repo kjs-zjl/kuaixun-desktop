@@ -234,14 +234,15 @@ function getMessage(msg) {
                     "((/?)|" // a slash isn't required if there is no file name 
                     +
                     "(/[0-9a-zA-Z_!~*'().;?:@&=+$,%#-]+)+/?)$";
-                var re = new RegExp(strRegex);
-                //re.test()
-                if (re.test(str_url)) {
-                    return (true);
+                var re = new RegExp(strRegex)
+                var re2 = /^(www)(\.[\w\d]+)+(\.(\w){2,})$/
+                if (re.test(str_url) || re2.test(str_url)) {
+                    return (true)
                 } else {
-                    return (false);
+                    return (false)
                 }
             }
+
             str = _$escape(msg.text)
             if (IsURL(str)) {
                 str = `<a class='outside-link' href=${str} target='_blank'>${str}</a>`
