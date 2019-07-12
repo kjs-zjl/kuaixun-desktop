@@ -3,4 +3,4 @@ webdemo/im/chatroom/node_modules/*
 npm-debug.log
 .vscode
 yarn.*
-win-kuaixun/*
+dist/*

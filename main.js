@@ -63,7 +63,7 @@ function createWindow() {
     win.reload()
   })
   //创建系统通知区菜单
-  tray = new Tray(path.join(__dirname, 'icon.ico'))
+  tray = new Tray(path.join(__dirname, 'icon2.ico'))
   const contextMenu = Menu.buildFromTemplate([{
       label: '打开',
       click: () => {
@@ -184,7 +184,7 @@ ipcMain.on("draw-windows-badge", (event, params) => {
     win.setOverlayIcon(taskImg, "taskBadge");
     tray.setImage(trayImg)
   } else {
-    tray.setImage(path.join(__dirname, 'icon.ico'));
+    tray.setImage(path.join(__dirname, 'icon2.ico'));
     win.setOverlayIcon(null, "Removing taskBadge");
   }
 })

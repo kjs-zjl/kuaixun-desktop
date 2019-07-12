@@ -166,7 +166,7 @@ async function setMessageBadgeTips(count) {
       canvas.width = 16;
       const cxt = canvas.getContext("2d");
       var img = new Image()
-      img.src = '../../icon.ico'
+      img.src = '../../icon2.ico'
       img.onload = function () { //图片加载完成，才可处理
         cxt.drawImage(img, 0, 0, 16, 16);
         cxt.save();
