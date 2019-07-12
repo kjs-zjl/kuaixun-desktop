@@ -5,11 +5,14 @@ const {
   Menu,
   Tray,
   BrowserWindow,
-  globalShortcut
+  ipcMain,
+  nativeImage
 } = require('electron')
 const path = require('path')
 const url = require('url')
-const ipc = require('electron').ipcMain
+// const Badge = require('electron-windows-badge')
+const Badge = require('electron-badge');
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -33,6 +36,8 @@ function createWindow() {
       nodeIntegration: true
     }
   })
+  const badgeOptions = {};
+  new Badge(win, badgeOptions);
 
   // and load the index.html of the app.
   win.loadURL(url.format({
@@ -40,7 +45,6 @@ function createWindow() {
     protocol: 'file:',
     slashes: true
   }))
-
   //开启调试工具  
   win.webContents.openDevTools()
   // win.setMenu(null)
@@ -57,10 +61,13 @@ function createWindow() {
     event.preventDefault();
   })
   win.on('show', () => {
-    tray.setHighlightMode('always')
+    win.webContents.send('init-windows-badge')
+    // tray.setHighlightMode('always')
   })
   win.on('hide', () => {
-    tray.setHighlightMode('never')
+    win.reload()
+    // win.webContents.send('reset-session')
+    // tray.setHighlightMode('never')
   })
   //创建系统通知区菜单
   tray = new Tray(path.join(__dirname, 'icon.ico'))
@@ -133,7 +140,7 @@ app.on('activate', () => {
 // 创建图片预览窗口
 let previewImgWin;
 // 监听渲染进程事件，并接收数据，将数据传递给子窗口
-ipc.on('previewPic', (event, params) => {
+ipcMain.on('previewPic', (event, params) => {
   createPreviewImgWindow(params)
 })
 
@@ -175,3 +182,28 @@ function createPreviewImgWindow(params) {
     previewImgWin.show();
   });
 }
+
+// 添加未读消息badge
+ipcMain.on("draw-windows-badge", (event, params) => {
+  if (params.task) {
+    const taskImg = nativeImage.createFromDataURL(params.task);
+    const trayImg = nativeImage.createFromDataURL(params.tray);
+    win.setOverlayIcon(taskImg, "taskBadge");
+    tray.setImage(trayImg)
+  } else {
+    tray.setImage(path.join(__dirname, 'icon.ico'));
+    win.setOverlayIcon(null, "Removing taskBadge");
+  }
+})
+
+// 任务栏闪烁
+ipcMain.on("flash-frame", (event, params) => {
+  if (!win.isFocused()) {
+    // win.showInactive();
+    win.flashFrame(true);
+  } else {
+    win.flashFrame(false);
+  }
+  // win.flashFrame(true)
+  // win.once('focus', () => win.flashFrame(false))
+})

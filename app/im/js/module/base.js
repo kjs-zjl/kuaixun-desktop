@@ -81,11 +81,12 @@ var flashTitle = function () {
 
 //关闭浏览器标题栏闪烁效果，注意不是直接调用flashTitle，要闲先判断定时器是不是已经在执行，保证多次调用只会执行一次。
 YX.fn.openFlashTitle = function () {
+  flashFrame()
   //没有执行时，才执行
-  if (!flashTitleRun) {
-    allowFlashTitle = true
-    flashTitle();
-  }
+  // if (!flashTitleRun) {
+  //   allowFlashTitle = true
+  //   flashTitle();
+  // }
 }
 
 /**

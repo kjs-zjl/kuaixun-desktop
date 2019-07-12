@@ -1,6 +1,8 @@
 const remote = require('electron').remote;
 const ipcRenderer = require('electron').ipcRenderer
 var ctrWindow = remote.getCurrentWindow()
+const drawBadge = require("@ernestchakhoyan/electron-windows-badge")
+
 /**
  * 图片预览相关
  */
@@ -98,4 +100,69 @@ ipcRenderer.on('imgMessage', (event, data) => {
   if ($('#previewBox .preview-pic').length > 0) {
     $('#previewBox .preview-pic').eq(data.index).click()
   }
+})
+
+// 添加未读消息badge
+async function setMessageBadgeTips(count) {
+  if (!count) {
+    ipcRenderer.send('draw-windows-badge', {
+      task: 0,
+      tray: 0
+    })
+    return
+  }
+  let badge = drawBadge(count, {
+    backgroundColor: "#f00",
+    textColor: "#fff"
+  })
+
+  function setTrayBadgeForWindows(badge) {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement("canvas");
+      canvas.height = 64;
+      canvas.width = 64;
+      const cxt = canvas.getContext("2d");
+      var img = new Image()
+      img.src = '../../icon.ico'
+      img.onload = function () { //图片加载完成，才可处理
+        cxt.drawImage(img, 0, 0, 64, 64);
+        cxt.save();
+        drawSecond()
+      };
+
+      function drawSecond() {
+        var img2 = new Image()
+        img2.src = badge
+        img2.onload = function () {
+          cxt.drawImage(img2, 20, 20, 45, 45)
+          resolve(canvas.toDataURL())
+        }
+      }
+    })
+  }
+  let badgeIcon = await setTrayBadgeForWindows(badge)
+  ipcRenderer.send('draw-windows-badge', {
+    task: badge,
+    tray: badgeIcon
+  })
+}
+
+// 任务栏闪烁
+function flashFrame() {
+  ipcRenderer.send("flash-frame")
+}
+
+ipcRenderer.on('init-windows-badge', () => {
+  setMessageBadgeTips(yunXin.totalUnread)
+  console.log(88888, yunXin)
+})
+
+ipcRenderer.on('reset-session', () => {
+  window.location.reload()
+
+  // console.log(2111)
+  // yunXin.crtSession = ''
+  // yunXin.crtSessionAccount = ''
+  // yunXin.crtSessionTeamType = ''
+  // yunXin.crtSessionType = ''
 })

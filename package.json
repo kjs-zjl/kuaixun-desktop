@@ -6,8 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "build": "electron-packager . kuaixun-win-x64 --win --out win-kuaixun --arch=x64 --app--version=1.0.0 --electron-version=5.0.6 --overwrite --icon=icon.ico"
+    "build-win": "electron-packager . kuaixun-win --win --out dist --arch=x64 --app--version=1.0.0 --electron-version=5.0.6 --overwrite --icon=icon.ico",
+    "build-mac": "electron-packager . kuaixun-mac --darwin --out dist --arch=x64 --app--version=1.0.0 --electron-version=5.0.6 --overwrite --icon=icon.ico"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@ernestchakhoyan/electron-windows-badge": "^1.1.2",
+    "electron-badge": "^0.3.2",
+    "electron-windows-badge": "^1.0.5"
+  }
 }

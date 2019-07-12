@@ -65,4 +65,5 @@ YX.fn.showUnread = function () {
     var $node = $(".m-unread .u-unread")
     $node.text(this.totalUnread)
     this.totalUnread ? $node.removeClass("hide") : $node.addClass("hide")
+    setMessageBadgeTips(this.totalUnread)
 }
