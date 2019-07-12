@@ -1,7 +1,6 @@
 const remote = require('electron').remote;
 const ipcRenderer = require('electron').ipcRenderer
 var ctrWindow = remote.getCurrentWindow()
-const drawBadge = require("@ernestchakhoyan/electron-windows-badge")
 
 /**
  * 图片预览相关
@@ -101,8 +100,7 @@ ipcRenderer.on('imgMessage', (event, data) => {
     $('#previewBox .preview-pic').eq(data.index).click()
   }
 })
-
-// 添加未读消息badge
+// 未读消息添加badge
 async function setMessageBadgeTips(count) {
   if (!count) {
     ipcRenderer.send('draw-windows-badge', {
@@ -111,58 +109,97 @@ async function setMessageBadgeTips(count) {
     })
     return
   }
-  let badge = drawBadge(count, {
-    backgroundColor: "#f00",
-    textColor: "#fff"
-  })
 
-  function setTrayBadgeForWindows(badge) {
+  function drawBadge(count, {
+    color = 'white',
+    background = 'red',
+    radius = 10,
+    fontSize = '15px',
+    fontFamily = 'Arial',
+    fontWeight = 'bold',
+    max = 99
+  }) {
+    let countText = count
+    let r = 0
+    if (count > max) {
+      countText = max + '+'
+      fontSize = '11px';
+      r = 2
+    } else if (count > 9) {
+      r = 2
+    } else if (count > 0) {
+      r = 0
+    } else {
+      return
+    }
+    const badgeSvg = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="${radius *
+      2}" height="${radius * 2}">
+      <circle cx="${radius}" cy="${radius}" r="${radius+r}" fill="${background}" />
+      <text x="${radius}" y="${radius+2}" text-anchor="middle" fill="${color}" font-size="${fontSize}" font-family="${fontFamily}" font-weight="${fontWeight}" dy=".3em">${countText}</text>
+    </svg>`;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const DOMURL = self.URL || self.webkitURL;
+    const img = new Image();
+    const svg = new Blob([badgeSvg], {
+      type: 'image/svg+xml;charset=utf-8'
+    });
+    const url = DOMURL.createObjectURL(svg);
+    canvas.width = 16;
+    canvas.height = 16;
+    return new Promise((resolve, reject) => {
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, 16, 16);
+        const png = canvas.toDataURL();
+        DOMURL.revokeObjectURL(png);
+        resolve(png);
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  }
+
+  function drawBadgeCoverIcon(badge) {
     return new Promise((resolve, reject) => {
       const canvas = document.createElement("canvas");
-      canvas.height = 64;
-      canvas.width = 64;
+      canvas.height = 16;
+      canvas.width = 16;
       const cxt = canvas.getContext("2d");
       var img = new Image()
       img.src = '../../icon.ico'
       img.onload = function () { //图片加载完成，才可处理
-        cxt.drawImage(img, 0, 0, 64, 64);
+        cxt.drawImage(img, 0, 0, 16, 16);
         cxt.save();
         drawSecond()
       };
+      let posW
+      if (count > 99) {
+        posW = 3
+      } else {
+        posW = 5
+      }
 
       function drawSecond() {
         var img2 = new Image()
         img2.src = badge
         img2.onload = function () {
-          cxt.drawImage(img2, 20, 20, 45, 45)
+          cxt.drawImage(img2, posW, 5, 16 - posW, 11)
           resolve(canvas.toDataURL())
         }
       }
     })
   }
-  let badgeIcon = await setTrayBadgeForWindows(badge)
+  let badge = await drawBadge(count, {})
+  let badgeIcon = await drawBadgeCoverIcon(badge)
   ipcRenderer.send('draw-windows-badge', {
     task: badge,
     tray: badgeIcon
   })
 }
-
 // 任务栏闪烁
 function flashFrame() {
   ipcRenderer.send("flash-frame")
 }
-
 ipcRenderer.on('init-windows-badge', () => {
   setMessageBadgeTips(yunXin.totalUnread)
-  console.log(88888, yunXin)
-})
-
-ipcRenderer.on('reset-session', () => {
-  window.location.reload()
-
-  // console.log(2111)
-  // yunXin.crtSession = ''
-  // yunXin.crtSessionAccount = ''
-  // yunXin.crtSessionTeamType = ''
-  // yunXin.crtSessionType = ''
 })

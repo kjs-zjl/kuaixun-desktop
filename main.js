@@ -10,8 +10,6 @@ const {
 } = require('electron')
 const path = require('path')
 const url = require('url')
-// const Badge = require('electron-windows-badge')
-const Badge = require('electron-badge');
 
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -36,8 +34,6 @@ function createWindow() {
       nodeIntegration: true
     }
   })
-  const badgeOptions = {};
-  new Badge(win, badgeOptions);
 
   // and load the index.html of the app.
   win.loadURL(url.format({
@@ -62,12 +58,9 @@ function createWindow() {
   })
   win.on('show', () => {
     win.webContents.send('init-windows-badge')
-    // tray.setHighlightMode('always')
   })
   win.on('hide', () => {
     win.reload()
-    // win.webContents.send('reset-session')
-    // tray.setHighlightMode('never')
   })
   //创建系统通知区菜单
   tray = new Tray(path.join(__dirname, 'icon.ico'))
