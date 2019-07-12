@@ -1,6 +1,8 @@
 const remote = require('electron').remote;
 const ipcRenderer = require('electron').ipcRenderer
 var ctrWindow = remote.getCurrentWindow()
+const shell = require('electron').shell
+// const os = require('os')
 
 /**
  * 图片预览相关
@@ -202,4 +204,17 @@ function flashFrame() {
 }
 ipcRenderer.on('init-windows-badge', () => {
   setMessageBadgeTips(yunXin.totalUnread)
+})
+//用默认浏览器打开a标签链接
+// assuming $ is jQuery
+$(document).on('click', 'a[href^="http"]', function (event) {
+  event.preventDefault()
+  shell.openExternal(this.href)
+  // if ($(this).hasClass('download-file')) {
+  //   console.log(os.homedir())
+  //   shell.showItemInFolder(os.homedir())
+  //   // shell.showItemInFolder()
+  // } else {
+  //   shell.openExternal(this.href)
+  // }
 })

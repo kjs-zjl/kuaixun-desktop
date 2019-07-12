@@ -420,6 +420,18 @@ body {
   background: #5cacde;
 }
 
+.msg-text .outside-link:hover {
+  text-decoration: underline;
+}
+
+.item-me .msg-text .outside-link {
+  color: blue;
+}
+
+.item-you .msg-text .outside-link {
+  color: #238efa;
+}
+
 .item-me .download-file {
   display: block;
   color: #fff;
