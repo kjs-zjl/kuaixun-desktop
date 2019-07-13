@@ -441,8 +441,8 @@ fn.onClickNetcallLink = function (type) {
 
     // p2p场景
     if (that.yx.crtSessionType === 'p2p') {
-        this.displayCallMethodUI(deviceCheck.bind(that))
-        // deviceCheck.call(that);
+        // this.displayCallMethodUI(deviceCheck.bind(that))
+        deviceCheck.call(that);
         return;
     }
 
@@ -453,8 +453,8 @@ fn.onClickNetcallLink = function (type) {
             that.showTip('无法发起，人数少于2人', 2000);
             return;
         }
-        that.displayCallMethodUI(deviceCheck.bind(that))
-        // deviceCheck.call(that);
+        // that.displayCallMethodUI(deviceCheck.bind(that))
+        deviceCheck.call(that);
     });
 
     // 下一步操作
@@ -469,7 +469,10 @@ fn.onClickNetcallLink = function (type) {
     }
 
     function deviceCheck(data) {
-
+        var data = {
+            type: "webrtc",
+            isRemeber: true
+        }
         this.callMethod = data.type;
         this.callMethodRemember = data.type;
 

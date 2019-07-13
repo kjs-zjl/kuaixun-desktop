@@ -76,13 +76,13 @@ function NetcallBridge(yx) {
     // 当前视频状态，是桌面共享还是视频: video / window / screen
     this.videoType = 'video'
 
-    this.isRtcSupported = false;
+    this.isRtcSupported = true;
     // this.signalInited = false;
 
-    // 通话方式选择，是WebRTC还是Netcall，每次发起通话都要进行选择, 值有: WebRTC / Netcall
-    this.callMethod = "";
+    // 通话方式选择，是WebRTC还是Netcall，每次发起通话都要进行选择, 值有: WebRTC / Netcall(webnet)
+    this.callMethod = "webrtc";
     // 通话方式选择，是WebRTC还是Netcall，第一次进行选择后记住选择
-    this.callMethodRemember = "";
+    this.callMethodRemember = "webrtc";
 
     // 真正业务调用的 API 桥, 在进行通话方式选择之后赋值对应的实例
     this.netcall = null;
@@ -334,8 +334,11 @@ fn.initNetcall = function () {
     this.initNetcallEvent();
 
     // 默认使用agent模式
-    this.netcall = this.webnet
-    this.callMethod = "webnet";
+    // this.netcall = this.webnet
+    // this.callMethod = "webnet";
+    // 默认使用webrtc模式
+    this.netcall = this.webrtc
+    this.callMethod = "webrtc";
 };
 
 /** 初始化webrtc事件 */
@@ -896,12 +899,16 @@ fn.accept = function (e) {
     if (!this.beCalling) return;
 
     // 发起通话选择UI
-    this.displayCallMethodUI(deviceCheck.bind(that), function () {
-        that.reject()
-    })
+    // this.displayCallMethodUI(deviceCheck.bind(that), function () {
+    //     that.reject()
+    // })
+    deviceCheck.call(that)
 
     function deviceCheck(data) {
-
+        var data = {
+            type: "webrtc",
+            isRemeber: true
+        }
         this.callMethod = data && data.type || this.callMethod;
         this.callMethodRemember = data && data.type || this.callMethodRemember;
 
