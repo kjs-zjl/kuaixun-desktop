@@ -179,10 +179,17 @@ YX.fn.cbAddFriendInBox = function (error, params) {
     }
 }
 YX.fn.removeFriend = function () {
-    if (window.confirm("确定要删除")) {
-        var account = this.$personCard.data("account")
-        this.mysdk.deleteFriend(account, this.cbRemoveFriend.bind(this))
-    }
+    var that = this
+    window.confirm("确定要删除?", function (result) {
+        if (result) {
+            var account = that.$personCard.data("account")
+            that.mysdk.deleteFriend(account, that.cbRemoveFriend.bind(that))
+        }
+    })
+    // if (window.confirm("确定要删除")) {
+    //     var account = this.$personCard.data("account")
+    //     this.mysdk.deleteFriend(account, this.cbRemoveFriend.bind(this))
+    // }
 
 }
 YX.fn.cbRemoveFriend = function (error, params) {

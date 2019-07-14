@@ -1,8 +1,11 @@
-const remote = require('electron').remote;
-const ipcRenderer = require('electron').ipcRenderer
+const {
+  remote,
+  ipcRenderer,
+  shell,
+} = require('electron')
 var ctrWindow = remote.getCurrentWindow()
-const shell = require('electron').shell
 const path = require('path')
+const dialog = remote.dialog
 
 /**
  * 图片预览相关
@@ -227,3 +230,31 @@ $(document).on('click', 'a[href]', function (event) {
     $(this).attr('download', true)
   }
 })
+
+
+
+// 重写window.alert()和window.confirm()方法,解决输入框因alert后不能获取焦点的bug
+window.alert = function (title) {
+  dialog.showMessageBox({
+    title: '快讯',
+    icon: path.join(__dirname, '../../build/icons/icon32.ico'),
+    // type: 'error',
+    message: title
+  })
+}
+window.confirm = function (title, callback) {
+  dialog.showMessageBox({
+    title: '快讯',
+    buttons: ['确定', '取消'],
+    icon: path.join(__dirname, '../../build/icons/icon32.ico'),
+    // type: 'error',
+    cancelId: 1,
+    message: title,
+  }, function (btnIndex) {
+    if (btnIndex === 0) {
+      callback(true)
+    } else {
+      callback(false)
+    }
+  })
+}
