@@ -1,0 +1,100 @@
+Arguments: 
+  D:\Program Files\nodejs\node.exe C:\Users\xiaoke\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js dist-win
+
+PATH: 
+  C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA NGX;D:\Program Files\Git\cmd;D:\Program Files\nodejs\;"E:\chrome download\mysql-8.0.16-winx64\bin;";C:\Users\xiaoke\AppData\Local\Microsoft\WindowsApps;;C:\Users\xiaoke\AppData\Roaming\npm;D:\Program Files\Microsoft VS Code\bin
+
+Yarn version: 
+  1.17.3
+
+Node version: 
+  10.16.0
+
+Platform: 
+  win32 x64
+
+Trace: 
+  SyntaxError: F:\project\electron-demon\kuaixun-desktop\package.json: Unexpected token } in JSON at position 1045
+      at JSON.parse (<anonymous>)
+      at C:\Users\xiaoke\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (C:\Users\xiaoke\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:304:30)
+      at C:\Users\xiaoke\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:315:13
+
+npm manifest: 
+  {
+    "name": "kuaixun-desktop",
+    "version": "1.0.1",
+    "description": "Kuaixun Desktop App",
+    "main": "main.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "electron .",
+      "build-win": "electron-packager . kuaixun-win --win --out dist --arch=x64 --app--version=1.0.0 --electron-version=5.0.6 --overwrite --icon=icon.ico",
+      "build-mac": "electron-packager . kuaixun-mac --darwin --out dist --arch=x64 --app--version=1.0.0 --electron-version=5.0.6 --overwrite --icon=icon.ico",
+      "dist": "electron-builder",
+      "dist-win": "electron-builder --win --ia32",
+      "dist-all": "electron-builder -mw"
+    },
+    "author": "Hengjia Company",
+    "license": "ISC",
+    "dependencies": {},
+    "build": {
+      "appId": "com.kuaixun.app",
+      "productName": "Kuaixun Desktop",
+      "copyright": "© 2019 8KUAIXUN.COM",
+      "electronVersion": "5.0.6",
+      "publish": [{
+        "provider": "generic",
+        "url": "https://www.8kuaixun.com"
+      }],
+      "mac": {
+        "category": "public.app-category.productivity",
+      },
+      "dmg": {
+        "background": "build/icons/Icon-512.png",
+        "icon": "build/icons/iconMac.icns",
+        "iconSize": 100,
+        "contents": [{
+            "x": 380,
+            "y": 280,
+            "type": "link",
+            "path": "/Applications"
+          },
+          {
+            "x": 110,
+            "y": 280,
+            "type": "file"
+          }
+        ],
+        "window": {
+          "width": 500,
+          "height": 500
+        }
+      },
+      "win": {
+        "icon": "build/icons/icon256.ico",
+        "target": ["nsis"]
+      },
+      "nsis": {
+        "oneClick": false,
+        "perMachine": true,
+        "allowElevation": true,
+        "allowToChangeInstallationDirectory": true,
+        "installerIcon": "build/icons/icon32.ico",
+        "createDesktopShortcut": true,
+        "createStartMenuShortcut": true,
+        "shortcutName": "快讯",
+        "license": "build/license.txt"
+      }
+    },
+    "devDependencies": {
+      "electron-builder": "^21.0.15"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

@@ -1,19 +1,70 @@
 {
   "name": "kuaixun-desktop",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "Kuaixun Desktop App",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
     "build-win": "electron-packager . kuaixun-win --win --out dist --arch=x64 --app--version=1.0.0 --electron-version=5.0.6 --overwrite --icon=icon.ico",
-    "build-mac": "electron-packager . kuaixun-mac --darwin --out dist --arch=x64 --app--version=1.0.0 --electron-version=5.0.6 --overwrite --icon=icon.ico"
+    "build-mac": "electron-packager . kuaixun-mac --darwin --out dist --arch=x64 --app--version=1.0.0 --electron-version=5.0.6 --overwrite --icon=icon.ico",
+    "dist": "electron-builder",
+    "dist-win": "electron-builder --win --ia32",
+    "dist-all": "electron-builder -mw"
   },
-  "author": "",
+  "author": "Hengjia Company",
   "license": "ISC",
-  "dependencies": {
-    "@ernestchakhoyan/electron-windows-badge": "^1.1.2",
-    "electron-badge": "^0.3.2",
-    "electron-windows-badge": "^1.0.5"
+  "dependencies": {},
+  "build": {
+    "appId": "com.kuaixun.app",
+    "productName": "Kuaixun Desktop",
+    "copyright": "© 2019 8KUAIXUN.COM",
+    "electronVersion": "5.0.6",
+    "publish": [{
+      "provider": "generic",
+      "url": "https://www.8kuaixun.com"
+    }],
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "dmg": {
+      "background": "build/icons/Icon-512.png",
+      "icon": "build/icons/iconMac.icns",
+      "iconSize": 100,
+      "contents": [{
+          "x": 380,
+          "y": 280,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 110,
+          "y": 280,
+          "type": "file"
+        }
+      ],
+      "window": {
+        "width": 500,
+        "height": 500
+      }
+    },
+    "win": {
+      "icon": "build/icons/icon256.ico",
+      "target": ["nsis"]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "build/icons/icon32.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "快讯",
+      "license": "build/license.txt"
+    }
+  },
+  "devDependencies": {
+    "electron-builder": "^21.0.15"
   }
 }

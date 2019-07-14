@@ -2,6 +2,9 @@ const remote = require('electron').remote;
 const ipcRenderer = require('electron').ipcRenderer
 var ctrWindow = remote.getCurrentWindow()
 const shell = require('electron').shell
+const path = require('path')
+let trayPath = path.join(__dirname, 'app/im/images')
+
 // const os = require('os')
 
 /**
@@ -168,7 +171,9 @@ async function setMessageBadgeTips(count) {
       canvas.width = 16;
       const cxt = canvas.getContext("2d");
       var img = new Image()
-      img.src = '../../icon2.ico'
+      // img.src = './images/icon16.ico'
+      img.src = path.join(__dirname, '../../icon16.ico')
+
       img.onload = function () { //图片加载完成，才可处理
         cxt.drawImage(img, 0, 0, 16, 16);
         cxt.save();

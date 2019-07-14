@@ -393,6 +393,11 @@ body {
   margin-top: 5px;
   border-radius: 8px;
   border: 1px solid;
+  max-width: 60%;
+}
+
+.msg .f-maxWid {
+  max-width: inherit;
 }
 
 .item-you .nick {

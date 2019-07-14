@@ -15,7 +15,7 @@ const url = require('url')
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
-let tray = null
+let tray = null;
 // const Menu = electron.Menu
 
 function createWindow() {
@@ -25,10 +25,10 @@ function createWindow() {
   win = new BrowserWindow({
     // width: 800,
     // height: 600,
-    autoHideMenuBar: true,
+    // autoHideMenuBar: true,
     minWidth: 800,
     minHeight: 600,
-    icon: path.join(__dirname, 'icon.ico'),
+    icon: path.join(__dirname, 'icon16.ico'),
     // frame: false,
     webPreferences: {
       nodeIntegration: true
@@ -37,13 +37,13 @@ function createWindow() {
 
   // and load the index.html of the app.
   win.loadURL(url.format({
-    pathname: path.join(__dirname, '/app/index.html'),
+    pathname: path.join(__dirname, 'app/index.html'),
     protocol: 'file:',
     slashes: true
   }))
   //开启调试工具  
-  win.webContents.openDevTools()
-  // win.setMenu(null)
+  // win.webContents.openDevTools()
+  win.setMenu(null)
   // 窗口关闭的监听  
   win.on('closed', (event) => {
     //回收BrowserWindow对象
@@ -63,7 +63,7 @@ function createWindow() {
     win.reload()
   })
   //创建系统通知区菜单
-  tray = new Tray(path.join(__dirname, 'icon2.ico'))
+  tray = new Tray(path.join(__dirname, 'icon16.ico'))
   const contextMenu = Menu.buildFromTemplate([{
       label: '打开',
       click: () => {
@@ -184,7 +184,7 @@ ipcMain.on("draw-windows-badge", (event, params) => {
     win.setOverlayIcon(taskImg, "taskBadge");
     tray.setImage(trayImg)
   } else {
-    tray.setImage(path.join(__dirname, 'icon2.ico'));
+    tray.setImage(path.join(__dirname, 'icon16.ico'));
     win.setOverlayIcon(null, "Removing taskBadge");
   }
 })
