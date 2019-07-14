@@ -324,14 +324,14 @@ function getMessage(msg) {
             }
             break;
         case 'geo':
-            str = sentStr + '一条[地理位置]消息';
+            str = sentStr + '一条[地理位置]消息,请到手机客户端查看';
             break;
         case 'custom':
             var content = JSON.parse(msg.content);
             if (content.type === 1) {
-                str = sentStr + '一条[猜拳]消息,请到手机或电脑客户端查看';
+                str = sentStr + '一条[猜拳]消息,请到手机客户端查看';
             } else if (content.type === 2) {
-                str = sentStr + '一条[阅后即焚]消息,请到手机或电脑客户端查看';
+                str = sentStr + '一条[阅后即焚]消息,请到手机客户端查看';
             } else if (content.type === 3) {
                 emojiIndex++
                 var catalog = _$escape(content.data.catalog),
@@ -341,11 +341,11 @@ function getMessage(msg) {
             } else if (content.type == 4) {
                 str = msg.fromNick + '发起了[白板互动]';
             } else {
-                str = sentStr + '一条[自定义]消息，请到手机或电脑客户端查看';
+                str = sentStr + '一条[自定义]消息，请到手机客户端查看';
             }
             break;
         case 'robot':
-            str = sentStr + '一条[机器人]消息,请到手机或电脑客户端查看';
+            str = sentStr + '一条[机器人]消息,请到手机客户端查看';
             break
         default:
             if (msg && msg.attach && msg.attach.netcallType !== undefined) {
