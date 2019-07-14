@@ -227,9 +227,9 @@ function getMessage(msg) {
                     +
                     "([0-9a-zA-Z][0-9a-zA-Z-]{0,61})?[0-9a-zA-Z]\." // 二级域名 
                     +
-                    "[a-zA-Z]{1000,1000})" // first level domain- .com or .museum 
+                    "[a-zA-Z]{1,3})" // first level domain- .com or .museum 
                     +
-                    "(:[0-9]{1,4})?" // 端口- :80 
+                    "(:[0-9]{2,4})?" // 端口- :80 
                     +
                     "((/?)|" // a slash isn't required if there is no file name 
                     +
@@ -250,7 +250,7 @@ function getMessage(msg) {
                 var re = /((((http:|https:)\/\/[\w.\/]+)(?![^<]+>)))/gi; // 识别链接
                 str = str.replace(re, "<a class='outside-link' href='$1' target='_blank'>$1</a>");
             }
-            // var re = /(http:\/\/[\w.\/]+)(?![^<]+>)/gi; // 识别链接
+            // var re = /((http:|https:)\/\/[\w.\/]+)(?![^<]+>)/gi; // 识别链接
             // str = _$escape(msg.text);
             // str = str.replace(re, "<a class='outside-link' href='$1' target='_blank'>$1</a>");
 
@@ -291,7 +291,8 @@ function getMessage(msg) {
                             url: url
                         })
                     }
-                    str = '<a class="f-maxWid" href="' + url + '" target="_blank"><img data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/></a>';
+                    // str = '<a class="f-maxWid" href="' + url + '" target="_blank"><img data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/></a>';
+                    str = '<img onload="loadImg()" class="previewImg" data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/>';
                 } else if (!/exe|bat/i.test(msg.file.ext)) {
                     if (msg.file) {
                         url += msg.file.url.indexOf('?') === -1 ? '?' : '&'

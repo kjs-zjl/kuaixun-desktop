@@ -3,9 +3,6 @@ const ipcRenderer = require('electron').ipcRenderer
 var ctrWindow = remote.getCurrentWindow()
 const shell = require('electron').shell
 const path = require('path')
-let trayPath = path.join(__dirname, 'app/im/images')
-
-// const os = require('os')
 
 /**
  * 图片预览相关
@@ -212,14 +209,21 @@ ipcRenderer.on('init-windows-badge', () => {
 })
 //用默认浏览器打开a标签链接
 // assuming $ is jQuery
-$(document).on('click', 'a[href^="http"]', function (event) {
-  event.preventDefault()
-  shell.openExternal(this.href)
-  // if ($(this).hasClass('download-file')) {
-  //   console.log(os.homedir())
-  //   shell.showItemInFolder(os.homedir())
-  //   // shell.showItemInFolder()
-  // } else {
-  //   shell.openExternal(this.href)
-  // }
+$(document).on('click', 'a[href]', function (event) {
+  if (!$(this).hasClass('download-file')) {
+    event.preventDefault()
+    shell.openExternal($(this).attr('href'))
+    return
+  }
+  // 文件相关
+  // 先判断在本地是否存在该文件，是则直接用默认软件打开或打开所在目录并选中，否则下载到本地
+  if (!true) {
+    // event.preventDefault()
+    // 打开文件所在文件夹, 一般情况下还会选中它
+    // shell.showItemInFolder($(this).attr('href'))
+    // 以默认打开方式打开文件(即直接打开文件)
+    // shell.openItem($(this).attr('href'))
+  } else {
+    $(this).attr('download', true)
+  }
 })

@@ -34,7 +34,6 @@ function createWindow() {
       nodeIntegration: true
     }
   })
-
   // and load the index.html of the app.
   win.loadURL(url.format({
     pathname: path.join(__dirname, 'app/index.html'),
@@ -42,8 +41,8 @@ function createWindow() {
     slashes: true
   }))
   //开启调试工具  
-  // win.webContents.openDevTools()
-  win.setMenu(null)
+  win.webContents.openDevTools()
+  // win.setMenu(null)
   // 窗口关闭的监听  
   win.on('closed', (event) => {
     //回收BrowserWindow对象
