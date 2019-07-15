@@ -203,6 +203,7 @@ async function setMessageBadgeTips(count) {
     tray: badgeIcon
   })
 }
+
 // 任务栏闪烁
 function flashFrame() {
   ipcRenderer.send("flash-frame")
@@ -210,6 +211,7 @@ function flashFrame() {
 ipcRenderer.on('init-windows-badge', () => {
   setMessageBadgeTips(yunXin.totalUnread)
 })
+
 //用默认浏览器打开a标签链接
 // assuming $ is jQuery
 $(document).on('click', 'a[href]', function (event) {
@@ -235,10 +237,11 @@ $(document).on('click', 'a[href]', function (event) {
 
 // 重写window.alert()和window.confirm()方法,解决输入框因alert后不能获取焦点的bug
 window.alert = function (title) {
-  dialog.showMessageBox({
+  console.log(5555, dialog.showMessageBox)
+  dialog.showMessageBox(ctrWindow, {
+    // type: 'question',
     title: '快讯',
-    icon: path.join(__dirname, '../../build/icons/icon32.ico'),
-    // type: 'error',
+    icon: path.join(__dirname, '../../icon32.ico'),
     message: title
   })
 }
@@ -246,7 +249,7 @@ window.confirm = function (title, callback) {
   dialog.showMessageBox({
     title: '快讯',
     buttons: ['确定', '取消'],
-    icon: path.join(__dirname, '../../build/icons/icon32.ico'),
+    icon: path.join(__dirname, '../../icon32.ico'),
     // type: 'error',
     cancelId: 1,
     message: title,
@@ -258,3 +261,20 @@ window.confirm = function (title, callback) {
     }
   })
 }
+
+// 更新状态
+ipcRenderer.on('updata-message', (event, data) => {
+  console.log(99999999, data)
+})
+// 下载进度
+ipcRenderer.on('downloadProgress', (event, data) => {
+  console.log(7777777, data)
+})
+// 下载完成
+ipcRenderer.on('downloadFinishn', (event, data) => {
+  window.confirm('检测到新版本,是否现在安装', function (result) {
+    if (result) {
+      ipcRenderer.send('isUpdateNow')
+    }
+  })
+})

@@ -464,19 +464,19 @@ YX.fn.multiportEvt = function () {
   }
   if ((pc && pc.online) || (mobile && mobile.online)) {
     if (pc && pc.online && (mobile && mobile.online)) {
-      $('.m-devices').html('正在使用云信手机版，电脑版');
+      $('.m-devices').html('正在使用快讯手机版，电脑版');
       $('#devices .pc').removeClass('hide');
       $('#devices .mobile').removeClass('hide');
       this.mysdk.mobileDeviceId = mobile.deviceId;
       this.mysdk.pcDeviceId = pc.deviceId;
     } else if (pc && pc.online) {
-      $('.m-devices').html('正在使用云信电脑版');
+      $('.m-devices').html('正在使用快讯电脑版');
       $('#devices .pc').removeClass('hide');
       $('#devices .mobile').addClass('hide');
       this.mysdk.mobileDeviceId = false;
       this.mysdk.pcDeviceId = pc.deviceId;
     } else {
-      $('.m-devices').html('正在使用云信手机版');
+      $('.m-devices').html('正在使用快讯手机版');
       $('#devices .mobile').removeClass('hide');
       $('#devices .pc').addClass('hide');
       this.mysdk.mobileDeviceId = mobile.deviceId;

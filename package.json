@@ -1,6 +1,6 @@
 {
   "name": "kuaixun-desktop",
-  "version": "1.0.1",
+  "version": "10.342.91",
   "description": "Kuaixun Desktop App",
   "main": "main.js",
   "scripts": {
@@ -14,7 +14,9 @@
   },
   "author": "Hengjia Company",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "electron-updater": "^4.1.2"
+  },
   "build": {
     "appId": "com.kuaixun.app",
     "productName": "Kuaixun Desktop",
@@ -22,7 +24,7 @@
     "electronVersion": "5.0.6",
     "publish": [{
       "provider": "generic",
-      "url": "https://www.8kuaixun.com"
+      "url": "https://www.8kuaixun.com/updata"
     }],
     "mac": {
       "category": "public.app-category.productivity"
@@ -50,7 +52,9 @@
     },
     "win": {
       "icon": "build/icons/icon256.ico",
-      "target": ["nsis"]
+      "target": [
+        "nsis"
+      ]
     },
     "nsis": {
       "oneClick": false,
