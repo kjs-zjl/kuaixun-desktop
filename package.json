@@ -1,6 +1,6 @@
 {
   "name": "kuaixun-desktop",
-  "version": "10.342.91",
+  "version": "1.0.1",
   "description": "Kuaixun Desktop App",
   "main": "main.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "build-mac": "electron-packager . kuaixun-mac --darwin --out dist --arch=x64 --app--version=1.0.0 --electron-version=5.0.6 --overwrite --icon=icon.ico",
     "dist": "electron-builder",
     "dist-win": "electron-builder --win --ia32",
-    "dist-all": "electron-builder -mw"
+    "dist-all": "electron-builder --win --mac --ia32"
   },
   "author": "Hengjia Company",
   "license": "ISC",
@@ -27,7 +27,9 @@
       "url": "https://www.8kuaixun.com/updata"
     }],
     "mac": {
-      "category": "public.app-category.productivity"
+      "category": "public.app-category.productivity",
+      "target": "dmg",
+      "icon": "build/icons/icon512.ico"
     },
     "dmg": {
       "background": "build/icons/Icon-512.png",

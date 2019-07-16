@@ -28,8 +28,6 @@ function createWindow() {
   // Menu.setApplicationMenu(null)
   // Create the browser window.
   win = new BrowserWindow({
-    // width: 800,
-    // height: 600,
     // autoHideMenuBar: true,
     minWidth: 800,
     minHeight: 600,
@@ -78,7 +76,7 @@ function createWindow() {
     {
       label: '退出',
       click: () => {
-        win.destroy() //我们需要在这里有一个真正的退出（这里直接强制退出）
+        win.destroy() // 我们需要在这里有一个真正的退出（这里直接强制退出）
         app.quit()
       }
     }
@@ -86,11 +84,11 @@ function createWindow() {
   tray.setToolTip('欢迎使用快讯\r\n恒佳08(hengjia08)')
   tray.setContextMenu(contextMenu)
   tray.on('click', () => {
-    //我们这里模拟桌面程序点击通知区图标实现打开关闭应用的功能
+    // 我们这里模拟桌面程序点击通知区图标实现打开关闭应用的功能
     win.isVisible() ? win.show() : win.show()
     win.isVisible() ? win.setSkipTaskbar(false) : win.setSkipTaskbar(true);
   })
-  //处理更新操作
+  // 应用自动更新相关
   function handleUpdate() {
     const returnData = {
       error: {
@@ -114,54 +112,41 @@ function createWindow() {
     autoUpdater.setFeedURL('https://www.8kuaixun.com/updata');
     //更新错误
     autoUpdater.on('error', function (error) {
-      console.log('error', error)
       sendUpdateMessage(returnData.error)
     });
     //检查中
     autoUpdater.on('checking-for-update', function () {
-      console.log('checking-for-update')
       sendUpdateMessage(returnData.checking)
     });
-    //发现新版本
+    //发现新版本(会自动下载)
     autoUpdater.on('update-available', function (info) {
-      console.log('update-available')
       sendUpdateMessage(returnData.updateAva)
     });
     //当前版本为最新版本
     autoUpdater.on('update-not-available', function (info) {
       setTimeout(function () {
-        console.log('update-not-available')
         sendUpdateMessage(returnData.updateNotAva)
       }, 1000);
     });
     // 更新下载进度事件
     autoUpdater.on('download-progress', function (progressObj) {
-      console.log('download-progress')
       win.webContents.send('downloadProgress', progressObj)
     });
     autoUpdater.on('update-downloaded', function (event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) {
-      console.log('update-downloaded')
       win.webContents.send('downloadFinishn', params)
       ipcMain.on('isUpdateNow', (e, arg) => {
         //some code here to handle event
         autoUpdater.quitAndInstall();
       });
-      // win.webContents.send('isUpdateNow')
     });
+    // 通过main进程发送事件给renderer进程，提示更新信息
+    function sendUpdateMessage(text) {
+      win.webContents.send('updata-message', text)
+    }
     //执行自动更新检查
     autoUpdater.checkForUpdates()
   }
   handleUpdate();
-  // 通过main进程发送事件给renderer进程，提示更新信息
-  function sendUpdateMessage(text) {
-    console.log(2111111111, text)
-    win.webContents.send('updata-message', text)
-  }
-  ipcMain.on("checkForUpdate", (event, data) => {
-    console.log('执行自动更新检查!!!');
-    // event.sender.send('reply', 'hi lee my name is yuan, age is 17');
-    autoUpdater.checkForUpdates();
-  });
 }
 
 // Electron单实例
