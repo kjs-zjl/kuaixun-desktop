@@ -216,7 +216,7 @@ function getMessage(msg) {
     switch (msg.type) {
         case 'text':
             // var re = /((http:|https:)\/\/[\w.\/]+)(?![^<]+>)/gi; // 识别链接
-            var re = /((http:\/\/|https:\/\/|www\.)[\w.\/#&%=:;?-]+)/gi; // 识别链接
+            var re = /((http:\/\/|https:\/\/|\w+\.)[\w.\/#&%=:;?-]+)/gi; // 识别链接
             str = _$escape(msg.text);
             str = str.replace(re, "<a class='outside-link' href='$1' target='_blank'>$1</a>");
 
