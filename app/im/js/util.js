@@ -215,44 +215,10 @@ function getMessage(msg) {
     var sentStr = (msg.flow === 'in') ? "收到" : "发送";
     switch (msg.type) {
         case 'text':
-            function IsURL(str_url) {
-                var strRegex = "^((https|http|ftp|rtsp|mms)?://)" +
-                    "?(([0-9a-zA-Z_!~*'().&=+$%-]+: )?[0-9a-zA-Z_!~*'().&=+$%-]+@)?" //ftp的user@ 
-                    +
-                    "(([0-9]{1,3}\.){3}[0-9]{1,3}" // IP形式的URL- 199.194.52.184 
-                    +
-                    "|" // 允许IP和DOMAIN（域名）
-                    +
-                    "([0-9a-zA-Z_!~*'()-]+\.)*" // 域名- www. 
-                    +
-                    "([0-9a-zA-Z][0-9a-zA-Z-]{0,61})?[0-9a-zA-Z]\." // 二级域名 
-                    +
-                    "[a-zA-Z]{1,3})" // first level domain- .com or .museum 
-                    +
-                    "(:[0-9]{2,4})?" // 端口- :80 
-                    +
-                    "((/?)|" // a slash isn't required if there is no file name 
-                    +
-                    "(/[0-9a-zA-Z_!~*'().;?:@&=+$,%#-]+)+/?)$";
-                var re = new RegExp(strRegex)
-                var re2 = /^(www)(\.[\w\d]+)+(\.(\w){2,})$/
-                if (re.test(str_url) || re2.test(str_url)) {
-                    return (true)
-                } else {
-                    return (false)
-                }
-            }
-
-            str = _$escape(msg.text)
-            if (IsURL(str)) {
-                str = `<a class='outside-link' href=${str} target='_blank'>${str}</a>`
-            } else {
-                var re = /((((http:|https:)\/\/[\w.\/]+)(?![^<]+>)))/gi; // 识别链接
-                str = str.replace(re, "<a class='outside-link' href='$1' target='_blank'>$1</a>");
-            }
             // var re = /((http:|https:)\/\/[\w.\/]+)(?![^<]+>)/gi; // 识别链接
-            // str = _$escape(msg.text);
-            // str = str.replace(re, "<a class='outside-link' href='$1' target='_blank'>$1</a>");
+            var re = /((http:\/\/|https:\/\/|www\.)[\w.\/#&%=:;?-]+)/gi; // 识别链接
+            str = _$escape(msg.text);
+            str = str.replace(re, "<a class='outside-link' href='$1' target='_blank'>$1</a>");
 
             str = buildEmoji(str);
             str = "<div class='f-maxWid'>" + str + "</div>"

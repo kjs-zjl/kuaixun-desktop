@@ -141,13 +141,6 @@ function createWindow() {
     });
     autoUpdater.on('update-downloaded', function (event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) {
       console.log('update-downloaded')
-      var params = {
-        releaseNotes,
-        releaseName,
-        releaseDate,
-        updateUrl,
-        quitAndUpdate
-      }
       win.webContents.send('downloadFinishn', params)
       ipcMain.on('isUpdateNow', (e, arg) => {
         //some code here to handle event

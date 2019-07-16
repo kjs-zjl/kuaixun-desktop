@@ -237,7 +237,6 @@ $(document).on('click', 'a[href]', function (event) {
 
 // 重写window.alert()和window.confirm()方法,解决输入框因alert后不能获取焦点的bug
 window.alert = function (title) {
-  console.log(5555, dialog.showMessageBox)
   dialog.showMessageBox(ctrWindow, {
     // type: 'question',
     title: '快讯',
@@ -250,7 +249,6 @@ window.confirm = function (title, callback) {
     title: '快讯',
     buttons: ['确定', '取消'],
     icon: path.join(__dirname, '../../icon32.ico'),
-    // type: 'error',
     cancelId: 1,
     message: title,
   }, function (btnIndex) {
@@ -262,15 +260,15 @@ window.confirm = function (title, callback) {
   })
 }
 
-// 更新状态
+// 自动更新---更新状态
 ipcRenderer.on('updata-message', (event, data) => {
   console.log(99999999, data)
 })
-// 下载进度
+// 自动更新---下载进度
 ipcRenderer.on('downloadProgress', (event, data) => {
   console.log(7777777, data)
 })
-// 下载完成
+// 自动更新---下载完成
 ipcRenderer.on('downloadFinishn', (event, data) => {
   window.confirm('检测到新版本,是否现在安装', function (result) {
     if (result) {
