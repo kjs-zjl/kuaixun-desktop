@@ -24,11 +24,9 @@ let tray = null;
 // const Menu = electron.Menu
 
 function createWindow() {
-  // 隐藏菜单栏
-  // Menu.setApplicationMenu(null)
   // Create the browser window.
   win = new BrowserWindow({
-    // autoHideMenuBar: true,
+    autoHideMenuBar: true,
     minWidth: 800,
     minHeight: 600,
     icon: path.join(__dirname, 'icon16.ico'),
@@ -45,7 +43,9 @@ function createWindow() {
   }))
   //开启调试工具  
   win.webContents.openDevTools()
-  // win.setMenu(null)
+  // 隐藏菜单栏 setApplicationMenu or setMenu
+  // Menu.setApplicationMenu(null)
+  win.setMenu(null)
   // 窗口关闭的监听  
   win.on('closed', (event) => {
     //回收BrowserWindow对象

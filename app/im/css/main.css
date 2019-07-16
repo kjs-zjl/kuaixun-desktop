@@ -1607,6 +1607,12 @@ body {
   z-index: 50;
 }
 
+.m-modifyAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .m-modifyAvatar .tt {
   margin-bottom: 20px;
 }

@@ -1,6 +1,6 @@
 {
   "name": "kuaixun-desktop",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "Kuaixun Desktop App",
   "main": "main.js",
   "scripts": {
