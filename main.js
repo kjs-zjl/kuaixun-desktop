@@ -88,65 +88,56 @@ function createWindow() {
     win.isVisible() ? win.show() : win.show()
     win.isVisible() ? win.setSkipTaskbar(false) : win.setSkipTaskbar(true);
   })
-  // 应用自动更新相关
-  function handleUpdate() {
-    const returnData = {
-      error: {
-        status: -1,
-        msg: '检测更新查询异常'
-      },
-      checking: {
-        status: 0,
-        msg: '正在检查应用程序更新'
-      },
-      updateAva: {
-        status: 1,
-        msg: '检测到新版本，正在下载,请稍后'
-      },
-      updateNotAva: {
-        status: -1,
-        msg: '您现在使用的版本为最新版本,无需更新!'
-      },
-    };
-    //和之前package.json配置的一样
-    autoUpdater.setFeedURL('https://www.8kuaixun.com/updata');
-    //更新错误
-    autoUpdater.on('error', function (error) {
-      sendUpdateMessage(returnData.error)
+  // 检查更新
+  checkForUpdates();
+}
+
+// 应用自动更新相关
+function checkForUpdates() {
+  // 配置安装包远端服务器，和package.json配置的一样
+  autoUpdater.setFeedURL('https://www.8kuaixun.com/updata')
+
+  // 下面是自动更新的整个生命周期所发生的事件
+  // case:更新错误
+  autoUpdater.on('error', function (info) {
+    sendUpdateMessage('error', info)
+  });
+  // case:检查中
+  autoUpdater.on('checking-for-update', function (info) {
+    sendUpdateMessage('checking-for-update', info)
+  });
+  // case:发现新版本(会自动下载)
+  autoUpdater.on('update-available', function (info) {
+    sendUpdateMessage('update-available', info)
+  });
+  // case:当前版本为最新版本
+  autoUpdater.on('update-not-available', function (info) {
+    sendUpdateMessage('update-not-available', info)
+  });
+
+  // case:更新下载进度事件
+  autoUpdater.on('download-progress', function (progressObj) {
+    sendUpdateMessage('download-progress', progressObj)
+  });
+  // case:更新下载完成事件
+  autoUpdater.on('update-downloaded', function (event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) {
+    sendUpdateMessage('isUpdateNow');
+    ipcMain.on('updateNow', (e, arg) => {
+      //some code here to handle event
+      autoUpdater.quitAndInstall();
     });
-    //检查中
-    autoUpdater.on('checking-for-update', function () {
-      sendUpdateMessage(returnData.checking)
-    });
-    //发现新版本(会自动下载)
-    autoUpdater.on('update-available', function (info) {
-      sendUpdateMessage(returnData.updateAva)
-    });
-    //当前版本为最新版本
-    autoUpdater.on('update-not-available', function (info) {
-      setTimeout(function () {
-        sendUpdateMessage(returnData.updateNotAva)
-      }, 1000);
-    });
-    // 更新下载进度事件
-    autoUpdater.on('download-progress', function (progressObj) {
-      win.webContents.send('downloadProgress', progressObj)
-    });
-    autoUpdater.on('update-downloaded', function (event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) {
-      win.webContents.send('downloadFinishn', params)
-      ipcMain.on('isUpdateNow', (e, arg) => {
-        //some code here to handle event
-        autoUpdater.quitAndInstall();
-      });
-    });
-    // 通过main进程发送事件给renderer进程，提示更新信息
-    function sendUpdateMessage(text) {
-      win.webContents.send('updata-message', text)
-    }
-    //执行自动更新检查
-    autoUpdater.checkForUpdates()
+  });
+
+  //执行自动更新检查
+  autoUpdater.checkForUpdates()
+
+  // 发送更新事件给render进程，提示更新信息
+  function sendUpdateMessage(message, data) {
+    win.webContents.send('updata-message', {
+      message,
+      data
+    })
   }
-  handleUpdate();
 }
 
 // Electron单实例

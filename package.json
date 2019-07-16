@@ -1,6 +1,6 @@
 {
   "name": "kuaixun-desktop",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Kuaixun Desktop App",
   "main": "main.js",
   "scripts": {
@@ -67,6 +67,7 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "快讯",
+      "artifactName": "KuaixunDesktopSetup.${ext}",
       "license": "build/license.txt"
     }
   },

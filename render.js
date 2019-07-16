@@ -260,19 +260,44 @@ window.confirm = function (title, callback) {
   })
 }
 
-// 自动更新---更新状态
-ipcRenderer.on('updata-message', (event, data) => {
-  console.log(99999999, data)
-})
-// 自动更新---下载进度
-ipcRenderer.on('downloadProgress', (event, data) => {
-  console.log(7777777, data)
-})
-// 自动更新---下载完成
-ipcRenderer.on('downloadFinishn', (event, data) => {
-  window.confirm('检测到新版本,是否现在安装', function (result) {
-    if (result) {
-      ipcRenderer.send('isUpdateNow')
+// 应用自动更新相关
+ipcRenderer.on('updata-message', (event, {
+  message,
+  data
+}) => {
+  const returnData = {
+    "error": {
+      status: -1,
+      msg: '检测更新查询异常'
+    },
+    "checking-for-update": {
+      status: 0,
+      msg: '正在检查应用程序更新'
+    },
+    "update-available": {
+      status: 1,
+      msg: '检测到新版本，正在下载,请稍后'
+    },
+    "update-not-available": {
+      status: 2,
+      msg: '您现在使用的版本为最新版本,无需更新!'
+    },
+    "isUpdateNow": {
+      status: 3,
+      msg: '下载完成，现在安装？'
+    },
+    "download-progress": {
+      status: 4,
+      msg: '下载进度:'
     }
-  })
+  };
+  console.log(`%c${returnData[message].msg} ${message}`, 'color:green;', data)
+  // 更新完成
+  if (message === 'isUpdateNow') {
+    window.confirm('检测到新版本,是否现在安装', function (result) {
+      if (result) {
+        ipcRenderer.send('updateNow')
+      }
+    })
+  }
 })
