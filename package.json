@@ -1,6 +1,6 @@
 {
   "name": "kuaixun-desktop",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Kuaixun Desktop App",
   "main": "main.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "start": "electron .",
     "build-win": "electron-packager . kuaixun-win --win --out dist --arch=x64 --app--version=1.0.0 --electron-version=5.0.6 --overwrite --icon=icon.ico",
     "build-mac": "electron-packager . kuaixun-mac --darwin --out dist --arch=x64 --app--version=1.0.0 --electron-version=5.0.6 --overwrite --icon=icon.ico",
-    "dist": "electron-builder",
+    "dist": "electron-builder --win --ia32",
     "dist-win": "electron-builder --win --ia32",
     "dist-all": "electron-builder --win --mac --ia32"
   },

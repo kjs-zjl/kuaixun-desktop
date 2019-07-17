@@ -57,7 +57,17 @@ YX.fn.initBase = function () {
  */
 YX.fn.bodyEventClick = function () {
   let that = this
-  document.body.addEventListener('click', function () {
+  document.body.addEventListener('click', function (event) {
+    event = event || window.event
+    var $target = $(event.target)
+    // 监听a标签，打开外网链接
+    if ($target.hasClass('outside-link')) {
+      var str = $target.attr('href')
+      if (str && (str.indexOf('http://') !== 0 && str.indexOf('https://') !== 0)) {
+        str = 'http://' + str
+        $target.attr('href', str)
+      }
+    }
     if (!that.totalUnread && flashTitleRun) {
       that.closeFlashTitle()
     }
