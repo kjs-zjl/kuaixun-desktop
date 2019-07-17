@@ -1,47 +1,81 @@
 /*
-* 云记录
-*/
+ * 云记录
+ */
 
 'use strict'
 
 YX.fn.cloudMsg = function () {
-	this.$cloudMsg = $('#cloudMsg')
-	this.$cloudMsgContainer = $('#cloudMsgContainer')
- 	this.$cloudMsg.on('click', this.showCloudMsg.bind(this, this.$cloudMsg));
+    this.$cloudMsg = $('#cloudMsg')
+    this.$cloudMsgContainer = $('#cloudMsgContainer')
+    this.$cloudMsg.on('click', this.showCloudMsg.bind(this, this.$cloudMsg));
     this.$cloudMsgContainer.delegate('.j-backBtn', 'click', this.closeCloudMsgContainer.bind(this));
     this.$cloudMsgContainer.delegate('.j-loadMore', 'click', this.loadMoreCloudMsg.bind(this))
-    this.$cloudMsgContainer.delegate('.j-mbox','click',this.playAudio)
+    this.$cloudMsgContainer.delegate('.j-mbox', 'click', this.playAudio)
+    this.$cloudMsgContainer.delegate('.cloud-scroll-bottom-btn', 'click', this.cloudScrollBottom.bind(this))
+    // 云记录滚动到底部按钮
+    // this.$cloudScrollBottomBtn = $("#cloudScrollBottomBtn")
+    // this.$cloudScrollBottomBtn.on('click', this.cloudScrollBottom.bind(this))
+    this.$cloudMsgContent = ''
 }
+// 云记录滚动按钮显示与隐藏
+YX.fn.cloudContentScroll = function () {
+    let that = this
+    let scrollBtn = $("#cloudScrollBottomBtn")
+    that.$cloudMsgContent.scroll(function () {
+        if ($(this)[0].scrollHeight - $(this)[0].scrollTop - $(this)[0].offsetHeight > $(this)[0].offsetHeight) {
+            !scrollBtn.hasClass('slideShow') && scrollBtn.addClass('slideShow')
+            scrollBtn.hasClass('slideHide') && scrollBtn.removeClass('slideHide')
+            // scrollBtn.hasClass('hide') && scrollBtn.removeClass('hide')
+        } else {
+            !scrollBtn.hasClass('slideHide') && scrollBtn.addClass('slideHide')
+            scrollBtn.hasClass('slideShow') && scrollBtn.removeClass('slideShow')
+            // !scrollBtn.hasClass('hide') && scrollBtn.addClass('hide')
+        }
+    })
+}
+// 云记录滚动到底部
+YX.fn.cloudScrollBottom = function () {
+    if (this.$cloudMsgContent) {
+        this.$cloudMsgContent[0].scrollTop = this.$cloudMsgContent[0].scrollHeight - 2 * this.$cloudMsgContent[0].offsetHeight - 10
+        this.$cloudMsgContent.animate({
+            scrollTop: this.$cloudMsgContent[0].scrollHeight - this.$cloudMsgContent[0].offsetHeight
+        }, 200)
+    }
+}
+
 /**
  * 查看云记录
  */
 YX.fn.showCloudMsg = function () {
     var that = this
-    this.$cloudMsgContainer.load('./cloudMsg.html', function() {
+    this.$cloudMsgContainer.load('./cloudMsg.html', function () {
         that.$cloudMsgContainer.removeClass('hide')
         var id = that.crtSessionAccount,
             scene = that.crtSessionType,
-            param ={
-                scene:scene,
-                to:id,
-                lastMsgId:0,
-                limit:20,
-                reverse:false,
-                done:that.cbCloudMsg.bind(that)
+            param = {
+                scene: scene,
+                to: id,
+                lastMsgId: 0,
+                limit: 20,
+                reverse: false,
+                done: that.cbCloudMsg.bind(that)
             }
         that.mysdk.getHistoryMsgs(param)
 
         /** 通话中的设置 */
-		var tmp = that.myNetcall;
-		tmp.$goNetcall.toggleClass("hide", !tmp.netcallActive);
+        var tmp = that.myNetcall;
+        tmp.$goNetcall.toggleClass("hide", !tmp.netcallActive);
+        // 监听云记录消息的滚动
+        that.$cloudMsgContent = $('#cloudMsgContainer .info-content')
+        that.cloudContentScroll()
     })
 }
 YX.fn.closeCloudMsgContainer = function () {
     this.$cloudMsgContainer.addClass('hide')
     /** 通话中的设置 */
-	var tmp = this.myNetcall;
-	tmp.$goNetcall.toggleClass("hide", true);
-},
+    var tmp = this.myNetcall;
+    tmp.$goNetcall.toggleClass("hide", true);
+}
 
 /**
  * 加载更多云记录
@@ -50,15 +84,15 @@ YX.fn.loadMoreCloudMsg = function () {
     var id = this.crtSessionAccount,
         scene = this.crtSessionType,
         lastItem = $("#cloudMsgList .item").first(),
-        param ={
-            scene:scene,
-            to:id,
-            beginTime:0,
-            endTime:parseInt(lastItem.attr('data-time')),
-            lastMsgId:parseInt(lastItem.attr('data-idServer')),//idServer 服务器用于区分消息用的ID，主要用于获取历史消息
-            limit:20,
-            reverse:false,
-            done:this.cbCloudMsg.bind(this)
+        param = {
+            scene: scene,
+            to: id,
+            beginTime: 0,
+            endTime: parseInt(lastItem.attr('data-time')),
+            lastMsgId: parseInt(lastItem.attr('data-idServer')), //idServer 服务器用于区分消息用的ID，主要用于获取历史消息
+            limit: 20,
+            reverse: false,
+            done: this.cbCloudMsg.bind(this)
         }
     this.mysdk.getHistoryMsgs(param)
 }
@@ -68,23 +102,23 @@ YX.fn.loadMoreCloudMsg = function () {
  * @param  {boolean} error 
  * @param  {object} obj 云记录对象
  */
-YX.fn.cbCloudMsg = function (error,obj) {
+YX.fn.cbCloudMsg = function (error, obj) {
     var $node = $("#cloudMsgList"),
         $tip = $("#cloudMsgContainer .u-status span")
     if (!error) {
         if (obj.msgs.length === 0) {
-            $tip.html('没有更早的聊天记录')          
+            $tip.html('没有更早的聊天记录')
         } else {
-            if(obj.msgs.length<20){
-                 $tip.html('没有更早的聊天记录') 
-             }else{
-                 $tip.html('<a class="j-loadMore">加载更多记录</a>')
-             }
-            var msgHtml = appUI.buildCloudMsgUI(obj.msgs,this.cache)       
+            if (obj.msgs.length < 20) {
+                $tip.html('没有更早的聊天记录')
+            } else {
+                $tip.html('<a class="j-loadMore">加载更多记录</a>')
+            }
+            var msgHtml = appUI.buildCloudMsgUI(obj.msgs, this.cache)
             $(msgHtml).prependTo($node)
         }
     } else {
         console && console.error('获取历史消息失败')
-        $tip.html('获取历史消息失败') 
+        $tip.html('获取历史消息失败')
     }
 }

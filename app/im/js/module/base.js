@@ -15,6 +15,7 @@ YX.fn = YX.prototype;
 YX.fn.initModule = function () {
   this.initBase();
   this.bodyEventClick();
+  this.chatContentScroll();
   this.message();
   this.notification();
   this.personCard();
@@ -46,12 +47,38 @@ YX.fn.initBase = function () {
   //2面板中间的圆点
   this.$chatVernier = $('#chatVernier span');
   $('#left-panel .item .list').on('scroll', this.doPoint.bind(this));
+  // 聊天面板滚动到底部按钮
+  this.$chatScrollBottomBtn = $("#chatScrollBottomBtn")
+  this.$chatScrollBottomBtn.on('click', this.chatScrollToBottom.bind(this))
   //登出
   this.logoutEvt();
   //多端登陆
   this.multiportEvt();
 };
 
+// 聊天面板滚动按钮显示与隐藏
+YX.fn.chatContentScroll = function () {
+  let that = this
+  let scrollBtn = that.$chatScrollBottomBtn
+  that.$chatContent.scroll(function () {
+    if ($(this)[0].scrollHeight - $(this)[0].scrollTop - $(this)[0].offsetHeight > $(this)[0].offsetHeight) {
+      !scrollBtn.hasClass('slideShow') && scrollBtn.addClass('slideShow')
+      scrollBtn.hasClass('slideHide') && scrollBtn.removeClass('slideHide')
+      // scrollBtn.hasClass('hide') && scrollBtn.removeClass('hide')
+    } else {
+      !scrollBtn.hasClass('slideHide') && scrollBtn.addClass('slideHide')
+      scrollBtn.hasClass('slideShow') && scrollBtn.removeClass('slideShow')
+      // !scrollBtn.hasClass('hide') && scrollBtn.addClass('hide')
+    }
+  })
+}
+// 聊天面板滚动到底部
+YX.fn.chatScrollToBottom = function () {
+  this.$chatContent[0].scrollTop = this.$chatContent[0].scrollHeight - 2 * this.$chatContent[0].offsetHeight - 10
+  this.$chatContent.animate({
+    scrollTop: this.$chatContent[0].scrollHeight - this.$chatContent[0].offsetHeight
+  }, 200)
+}
 /**
  * 监听窗口的点击事件，如果当前没有未读信息但已开启浏览器标题栏闪烁效果,则关闭
  */
@@ -88,7 +115,6 @@ var flashTitle = function () {
   document.title = flag ? "★ ★ 有新的消息 ★ ★" : "..."
   setTimeout(flashTitle, 400)
 }
-
 //关闭浏览器标题栏闪烁效果，注意不是直接调用flashTitle，要闲先判断定时器是不是已经在执行，保证多次调用只会执行一次。
 YX.fn.openFlashTitle = function () {
   flashFrame()
@@ -98,7 +124,6 @@ YX.fn.openFlashTitle = function () {
   //   flashTitle();
   // }
 }
-
 /**
  * 关闭浏览器标题栏闪烁效果
  */
@@ -107,6 +132,7 @@ YX.fn.closeFlashTitle = function () {
   allowFlashTitle = false
   flashTitleRun = false
 }
+
 
 /**
  * 同步完成后 UI显示  本demo这里显示最近会话列表 跟消息中心 新系统通知技术计数

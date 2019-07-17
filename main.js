@@ -42,10 +42,10 @@ function createWindow() {
     slashes: true
   }))
   //开启调试工具  
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
   // 隐藏菜单栏 setApplicationMenu or setMenu
   // Menu.setApplicationMenu(null)
-  win.setMenu(null)
+  // win.setMenu(null)
   // 窗口关闭的监听  
   win.on('closed', (event) => {
     //回收BrowserWindow对象
