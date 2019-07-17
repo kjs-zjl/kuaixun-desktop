@@ -502,11 +502,17 @@ body {
   position: relative;
   min-height: 20px;
   line-height: 20px;
-  overflow: hidden;
+  /* overflow: hidden; */
   white-space: normal;
   word-wrap: break-word;
   word-break: break-all;
   font-size: 14px;
+}
+
+.msg .cnt::after {
+  content: '';
+  display: block;
+  clear: both;
 }
 
 .msg .cnt img {
