@@ -215,9 +215,13 @@ ipcRenderer.on('init-windows-badge', () => {
 //用默认浏览器打开a标签链接
 // assuming $ is jQuery
 $(document).on('click', 'a[href]', function (event) {
+  let url = $(this).attr('href')
+  if (url.indexOf('./') === 0) {
+    return
+  }
   if (!$(this).hasClass('download-file')) {
     event.preventDefault()
-    shell.openExternal($(this).attr('href'))
+    shell.openExternal(url)
     return
   }
   // 文件相关
