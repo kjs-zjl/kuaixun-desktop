@@ -81,7 +81,7 @@ function createWindow() {
       }
     }
   ])
-  tray.setToolTip('欢迎使用快讯\r\n恒佳08(hengjia08)')
+  tray.setToolTip('欢迎使用快讯')
   tray.setContextMenu(contextMenu)
   tray.on('click', () => {
     // 我们这里模拟桌面程序点击通知区图标实现打开关闭应用的功能
