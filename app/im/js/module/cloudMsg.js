@@ -12,25 +12,29 @@ YX.fn.cloudMsg = function () {
     this.$cloudMsgContainer.delegate('.j-loadMore', 'click', this.loadMoreCloudMsg.bind(this))
     this.$cloudMsgContainer.delegate('.j-mbox', 'click', this.playAudio)
     this.$cloudMsgContainer.delegate('.cloud-scroll-bottom-btn', 'click', this.cloudScrollBottom.bind(this))
-    // 云记录滚动到底部按钮
-    // this.$cloudScrollBottomBtn = $("#cloudScrollBottomBtn")
-    // this.$cloudScrollBottomBtn.on('click', this.cloudScrollBottom.bind(this))
+    // 云记录滚动框
     this.$cloudMsgContent = ''
 }
 // 云记录滚动按钮显示与隐藏
 YX.fn.cloudContentScroll = function () {
     let that = this
+    if (!that.$cloudMsgContent) {
+        return
+    }
     let scrollBtn = $("#cloudScrollBottomBtn")
-    that.$cloudMsgContent.scroll(function () {
-        if ($(this)[0].scrollHeight - $(this)[0].scrollTop - $(this)[0].offsetHeight > $(this)[0].offsetHeight) {
+
+    function showOrHideScrolBtn(ele) {
+        if (ele.scrollHeight - ele.scrollTop - ele.offsetHeight + 17 > ele.offsetHeight) {
             !scrollBtn.hasClass('slideShow') && scrollBtn.addClass('slideShow')
             scrollBtn.hasClass('slideHide') && scrollBtn.removeClass('slideHide')
-            // scrollBtn.hasClass('hide') && scrollBtn.removeClass('hide')
         } else {
             !scrollBtn.hasClass('slideHide') && scrollBtn.addClass('slideHide')
             scrollBtn.hasClass('slideShow') && scrollBtn.removeClass('slideShow')
-            // !scrollBtn.hasClass('hide') && scrollBtn.addClass('hide')
         }
+    }
+    showOrHideScrolBtn(that.$cloudMsgContent[0])
+    that.$cloudMsgContent.scroll(function () {
+        showOrHideScrolBtn($(this)[0])
     })
 }
 // 云记录滚动到底部
@@ -38,7 +42,7 @@ YX.fn.cloudScrollBottom = function () {
     if (this.$cloudMsgContent) {
         this.$cloudMsgContent[0].scrollTop = this.$cloudMsgContent[0].scrollHeight - 2 * this.$cloudMsgContent[0].offsetHeight - 10
         this.$cloudMsgContent.animate({
-            scrollTop: this.$cloudMsgContent[0].scrollHeight - this.$cloudMsgContent[0].offsetHeight
+            scrollTop: this.$cloudMsgContent[0].scrollHeight - this.$cloudMsgContent[0].offsetHeight + 17
         }, 200)
     }
 }
@@ -65,9 +69,6 @@ YX.fn.showCloudMsg = function () {
         /** 通话中的设置 */
         var tmp = that.myNetcall;
         tmp.$goNetcall.toggleClass("hide", !tmp.netcallActive);
-        // 监听云记录消息的滚动
-        that.$cloudMsgContent = $('#cloudMsgContainer .info-content')
-        that.cloudContentScroll()
     })
 }
 YX.fn.closeCloudMsgContainer = function () {
@@ -116,6 +117,9 @@ YX.fn.cbCloudMsg = function (error, obj) {
             }
             var msgHtml = appUI.buildCloudMsgUI(obj.msgs, this.cache)
             $(msgHtml).prependTo($node)
+            // 监听云记录消息的滚动
+            this.$cloudMsgContent = $('#cloudMsgContainer .info-content')
+            this.cloudContentScroll()
         }
     } else {
         console && console.error('获取历史消息失败')
